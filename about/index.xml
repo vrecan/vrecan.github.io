@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Abouts on Vrecan...</title>
+    <link>http://localhost:1313/about/</link>
+    <description>Recent content in Abouts on Vrecan...</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language>
+    <lastBuildDate>Sun, 01 Mar 2015 20:35:01 -0700</lastBuildDate>
+    <atom:link href="http://localhost:1313/about/index.xml" rel="self" type="application/rss+xml" />
+    
+    <item>
+      <title>About Me</title>
+      <link>http://localhost:1313/about/about/</link>
+      <pubDate>Sun, 01 Mar 2015 20:35:01 -0700</pubDate>
+      
+      <guid>http://localhost:1313/about/about/</guid>
+      <description>
+
+&lt;h1 id=&#34;about-me:6083a88ee3411b0d17ce02d738f69d47&#34;&gt;About Me&lt;/h1&gt;
+
+&lt;p&gt;Principle software engineer at Logrhythm specializing in big data and clustering software. With over 10 years of experience building high performance software.&lt;/p&gt;
+
+&lt;h2 id=&#34;programming-languages:6083a88ee3411b0d17ce02d738f69d47&#34;&gt;Programming Languages&lt;/h2&gt;
+
+&lt;ul&gt;
+&lt;li&gt;Go&lt;/li&gt;
+&lt;li&gt;C++&lt;/li&gt;
+&lt;li&gt;Java&lt;/li&gt;
+&lt;li&gt;C&lt;/li&gt;
+&lt;li&gt;PHP&lt;/li&gt;
+&lt;li&gt;Perl&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h2 id=&#34;recent-software-projects:6083a88ee3411b0d17ce02d738f69d47&#34;&gt;Recent Software Projects&lt;/h2&gt;
+
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;https://github.com/vrecan/rift&#34;&gt;Simple zeromq push relay&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;https://github.com/CapillarySoftware/goiostat&#34;&gt;IOStat that reports over zeromq or nanomsg&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;https://www.logrhythm.com/siem-2.0/features-components/network-monitor.aspx&#34;&gt;Logrhythm Network Monitor&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+</description>
+    </item>
+    
+  </channel>
+</rss>

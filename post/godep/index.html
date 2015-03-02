@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en-us">
+<head>
+  <title>
+    Go dependency management // Vrecan...
+  </title>
+
+  <link href="http://gmpg.org/xfn/11" rel="profile">
+<meta http-equiv="content-type" content="text/html; charset=utf-8">
+
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1">
+
+<meta name="description" content="">
+<meta name="keywords" content="">
+<meta name="author" content="">
+
+  <meta property="og:title" content="Go dependency management" />
+<meta property="og:description" content="" />
+<meta property="og:type" content="website" />
+<meta property="og:locale" content="en_US" />
+<meta property="og:url" content="http://localhost:1313/post/godep/" />
+
+
+  
+  <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/pure/0.5.0/base-min.css">
+  <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/pure/0.5.0/pure-min.css">
+  
+  
+    <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/pure/0.5.0/grids-responsive-min.css">
+  
+  
+
+  <link rel="stylesheet" href="http://localhost:1313//css/redlounge.css">
+  <link href="//maxcdn.bootstrapcdn.com/font-awesome/4.2.0/css/font-awesome.min.css" rel="stylesheet">
+  <link href='//fonts.googleapis.com/css?family=Raleway:400,200,100,700,300,500,600,800' rel='stylesheet' type='text/css'>
+  <link href='//fonts.googleapis.com/css?family=Libre+Baskerville:400,700,400italic' rel='stylesheet' type='text/css'>
+
+  
+  <link rel="apple-touch-icon-precomposed" sizes="144x144" href="http://localhost:1313/touch-icon-144-precomposed.png">
+  <link rel="shortcut icon" href="http://localhost:1313/favicon.png">
+
+  
+  <link href="" rel="alternate" type="application/rss+xml" title="Vrecan..." />
+
+    
+  
+  <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/8.4/styles/tomorrow-night-bright.min.css">
+  
+  <script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/8.4/highlight.min.js"></script>
+  <script>hljs.initHighlightingOnLoad();</script>
+
+
+  
+
+  
+
+  
+</head>
+
+<body>
+	
+
+	<div id="layout" class="pure-g">
+    <div class="sidebar pure-u-1 pure-u-md-1-4">
+  <div class="header">
+    
+
+    
+    
+
+    <nav class="nav">
+      <ul class="nav-list">
+        <li class="nav-item"><span class="nav-item-separator">//</span><a href="http://localhost:1313/">Home</a></li>
+        
+          <li class="nav-item"><span class="nav-item-separator">//</span><a href="http://localhost:1313/about/">About Me</a></li>
+        
+          <li class="nav-item"><span class="nav-item-separator">//</span><a href="http://localhost:1313/post/">Posts</a></li>
+        
+      </ul>
+    </nav>
+
+    
+    <div class="social-buttons">
+      
+        
+        <a href="http://www.github.com/vrecan" target="_blank"><i class='fa fa-github'></i></a>
+        
+      
+      
+    </div>
+    
+
+  </div>
+</div>
+
+	
+	
+
+    <div class="content pure-u-1 pure-u-md-3-4">
+		<a name="top"></a>
+		
+
+		
+			
+		    <div id="toc" class="pure-u-1 pure-u-md-1-4">
+				<small class="toc-label">Contents</small>
+		   	 	<nav id="TableOfContents">
+<ul>
+<li>
+<ul>
+<li><a href="#building-with-new-dependencies:8a18e8b20bd4ceba8c6e1d3df562deeb">Building with new dependencies</a></li>
+<li><a href="#conclusion-drawbacks:8a18e8b20bd4ceba8c6e1d3df562deeb">Conclusion / Drawbacks</a></li>
+</ul></li>
+</ul>
+</nav>
+		    </div>
+		    
+	    
+  		<section class="post">
+            <h1 class="post-title">
+              <a href="http://localhost:1313/post/godep">Go dependency management</a>
+            </h1>
+            <h3 class="post-subtitle">
+            	
+            </h3>
+            
+            	<span class="post-date">
+                	<span class="post-date-day"><sup>1</sup></span><span class="post-date-separator">/</span><span class="post-date-month">Mar</span> <span class="post-date-year">2015</span>
+            	</span>
+            	
+            
+            	
+            
+
+			
+			
+
+			
+
+			
+
+            
+
+<p>Godeps is a nice simple tool that allows you to manage dependencies in a very easy way. One major drawback though is that it requires you to commit your dependencies into your repository. This is great for simplicity but horrible for code review. Seeing a commit with 26k files changed really makes it hard to review.</p>
+
+<p>I&rsquo;ve found a simple solution to the problem if you use the common go import layout</p>
+
+<pre><code>+-- github.com
+|   +-- company
+|   |   +-- project
+</code></pre>
+
+<p>If you follow this layout then you can easily extract all your deps into their own repo like so.</p>
+
+<pre><code>cd github.com/company
+godep save ./...
+</code></pre>
+
+<p>This will Recursively grab your dependencies that are not in this path and put them in a godeps folder at the company depth. Now add the contents of the new Godeps folder into a new repo with the name Godeps. </p>
+
+<h2 id="building-with-new-dependencies:8a18e8b20bd4ceba8c6e1d3df562deeb">Building with new dependencies</h2>
+
+<p>Now that you have dependencies in their own repo you can add Godeps to your .gitignore for all your other repos and pull them down locally.</p>
+
+<pre><code>cd github.com/company/project
+git clone github.com/company/Godeps
+godep go buld
+godep go test ./... --race
+</code></pre>
+
+<h2 id="conclusion-drawbacks:8a18e8b20bd4ceba8c6e1d3df562deeb">Conclusion / Drawbacks</h2>
+
+<p>This works great if you are ok with taking the master branch versions of all your own software. This might not work for everyone but with my workflow this seems to give us the best of both worlds. Easy third party library management and go getable software for all of our repos. This also has the added benefit that we no longer have to remember to update godep everytime we make an internal library change, in our workflow everything in master should be buildable together.</p>
+
+	
+			
+
+			
+				<div class="tags-list">
+					<span class="dark-red">Tags</span><span class="decorative-marker">//</span>
+					
+	                <a class="post-tag post-tag-development" href="http://localhost:1313//tags/development">Development</a>,
+	                
+	                <a class="post-tag post-tag-go" href="http://localhost:1313//tags/go">Go</a>,
+	                
+	                <a class="post-tag post-tag-godeps" href="http://localhost:1313//tags/godeps">Godeps</a>,
+	                
+	                <a class="post-tag post-tag-dependency-management" href="http://localhost:1313//tags/dependency-management">Dependency Management</a>,
+	                
+				</div>
+			
+
+			
+				<div class="paging">
+					<span class="paging-label">More Reading</span>
+					
+
+					
+					<div class="paging-older">
+						<span class="dark-red">Older</span><span class="decorative-marker">//</span>
+			            <a class="paging-link" href="http://localhost:1313/about/about">About Me</a>
+		            </div>
+		            
+	            </div>
+            
+          </section>
+          
+          	<div id="disqus_thread"></div>
+<script type="text/javascript">
+    var disqus_shortname = 'vrecan';
+    var disqus_identifier = 'http:\/\/localhost:1313\/post\/godep\/';
+    var disqus_title = 'Go dependency management';
+    var disqus_url = 'http:\/\/localhost:1313\/post\/godep\/';
+
+    (function() {
+        var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+        dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+<a href="http://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+          
+        
+      <div class="footer">
+	<hr class="thin" />
+	<div class="pure-menu pure-menu-horizontal pure-menu-open">
+		<ul class="footer-menu">
+		
+		</ul>
+	</div>
+
+	<p>&copy; 2015. All rights reserved. </p>
+</div>
+    </div>
+  </div>
+	
+
+	
+
+  
+<script>document.write('<script src="http://'
+        + (location.host || 'localhost').split(':')[0]
+		+ ':1313/livereload.js?mindelay=10"></'
+        + 'script>')</script></body>
+</html>
