@@ -58,9 +58,7 @@ godep go test ./... --race
       <guid>http://vrecan.github.io/about/about/</guid>
       <description>
 
-&lt;h1 id=&#34;about-me:6083a88ee3411b0d17ce02d738f69d47&#34;&gt;About Me&lt;/h1&gt;
-
-&lt;p&gt;Principle software engineer at Logrhythm specializing in big data and clustering software. With over 10 years of experience building high performance software.&lt;/p&gt;
+&lt;p&gt;I&#39;m Ben Aldrich, I am a principle software engineer at Logrhythm specializing in big data and clustering software. With over 10 years of experience building high performance software.&lt;/p&gt;
 
 &lt;h2 id=&#34;programming-languages:6083a88ee3411b0d17ce02d738f69d47&#34;&gt;Programming Languages&lt;/h2&gt;
 
