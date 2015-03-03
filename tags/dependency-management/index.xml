@@ -10,7 +10,7 @@
     <atom:link href="http://vrecan.github.io/tags/dependency-management/index.xml" rel="self" type="application/rss+xml" />
     
     <item>
-      <title>Go dependency management</title>
+      <title>Go Dependency Management</title>
       <link>http://vrecan.github.io/post/godep/</link>
       <pubDate>Sun, 01 Mar 2015 20:38:08 -0700</pubDate>
       
@@ -46,7 +46,8 @@ godep go test ./... --race
 
 &lt;h2 id=&#34;conclusion-drawbacks:8a18e8b20bd4ceba8c6e1d3df562deeb&#34;&gt;Conclusion / Drawbacks&lt;/h2&gt;
 
-&lt;p&gt;This works great if you are ok with taking the master branch versions of all your own software. This might not work for everyone but with my workflow this seems to give us the best of both worlds. Easy third party library management and go getable software for all of our repos. This also has the added benefit that we no longer have to remember to update godep everytime we make an internal library change, in our workflow everything in master should be buildable together.&lt;/p&gt;
+&lt;p&gt;
+This works great if you are ok with taking the master branch versions of all your own software. This might not work for everyone but with my workflow this seems to give us the best of both worlds. Easy third party library management and go getable software for all of our repos. This also has the added benefit that we no longer have to remember to update godep everytime we make an internal library change, in our workflow everything in master should be buildable together.&lt;/p&gt;
 </description>
     </item>
     
