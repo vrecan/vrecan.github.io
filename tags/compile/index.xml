@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Compile on Vrecan...</title>
+    <link>http://vrecan.github.io/tags/compile/</link>
+    <description>Recent content in Compile on Vrecan...</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language>
+    <lastBuildDate>Mon, 02 Mar 2015 20:29:34 -0700</lastBuildDate>
+    <atom:link href="http://vrecan.github.io/tags/compile/index.xml" rel="self" type="application/rss+xml" />
+    
+    <item>
+      <title>Compiling ZeroMQ for Windows in Centos 7</title>
+      <link>http://vrecan.github.io/post/crosscompile_go_zeromq/</link>
+      <pubDate>Mon, 02 Mar 2015 20:29:34 -0700</pubDate>
+      
+      <guid>http://vrecan.github.io/post/crosscompile_go_zeromq/</guid>
+      <description>&lt;p&gt;I&#39;ve found it really dificult to find a concrete tutorial for building zeromq for go in windows using MinGW in centos 7. First lets add the epel-release repo.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;sudo yum install epel-release
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Now lets install mingw64. For this tutorial I am going to just install all the mingw libraries.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;sudo yum install mingw64*
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt; Now lets download and compile zeromq using mingw.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;wget http://download.zeromq.org/zeromq-4.0.5.zip
+unzip zeromq-4.0.5.zip ~/zeromq
+cd ~/zeromq
+mingw64-configure configure
+mingw64-make
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Now lets recompile go so that it is also using the mingw compiler.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;cd /usr/local/go/src
+sudo  env CGO_ENABLED=1 GOOS=windows GOARCH=amd64 CC_FOR_TARGET=&amp;quot;x86_64-w64-mingw32-gcc&amp;quot; ./make.bash
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Lets move to the go project that you are going to be using with zeromq.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;cd &amp;lt;PROJECT DIR&amp;gt;
+env CGO_ENABLED=1 GOOS=windows GOARCH=amd64 CC_FOR_TARGET=&amp;quot;x86_64-w64-mingw32-gcc&amp;quot; CGO_LDFLAGS=&amp;quot;-L/home/&amp;lt;username&amp;gt;/zeromq/src/.libs -static-libgcc&amp;quot; go build -v -x  -o app.exe
+minigw_bin=/usr/x86_64-w64-mingw32/sys-root/mingw/bin/
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;This should have created an exe binary that is linked to the mingw dll&#39;s and your recently compiled version of zeromq. Now lets copy the dll&#39;s for the required libraries to the current directory so that we can package this up and put it on a windows box.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;cp $minigw_bin/libwinpthread-1.dll .
+cp $minigw_bin/libgcc_s_seh-1.dll .
+cp $minigw_bin/libstdc++-6.dll .
+cp ~/zeromq/src/.libs/libzmq.dll .
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;&lt;p&gt; If you now transfer this folder to a windows(64) 7/8/8.1 box you can now just execute the .exe and have a working go windows application using zeromq.&lt;/p&gt;
+</description>
+    </item>
+    
+  </channel>
+</rss>
