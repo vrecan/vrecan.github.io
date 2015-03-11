@@ -208,6 +208,7 @@ This works great if you are ok with taking the master branch versions of all you
 &lt;h2 id=&#34;recent-software-projects:6083a88ee3411b0d17ce02d738f69d47&#34;&gt;Recent Software Projects&lt;/h2&gt;
 
 &lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;https://github.com/vrecan/death&#34;&gt;Managing death in golang&lt;/a&gt;&lt;/li&gt;
 &lt;li&gt;&lt;a href=&#34;https://github.com/vrecan/rift&#34;&gt;Simple zeromq push relay&lt;/a&gt;&lt;/li&gt;
 &lt;li&gt;&lt;a href=&#34;https://github.com/CapillarySoftware/goiostat&#34;&gt;IOStat that reports over zeromq or nanomsg&lt;/a&gt;&lt;/li&gt;
 &lt;li&gt;&lt;a href=&#34;https://www.logrhythm.com/siem-2.0/features-components/network-monitor.aspx&#34;&gt;Logrhythm Network Monitor&lt;/a&gt;&lt;/li&gt;
