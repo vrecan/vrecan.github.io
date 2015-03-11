@@ -2,7 +2,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en-us">
 <head>
   <title>
-    Compiling ZeroMQ for Windows in Centos 7 // Vrecan...
+    Managing Application Shutdown in Go // Vrecan...
   </title>
 
   <link href="http://gmpg.org/xfn/11" rel="profile">
@@ -11,15 +11,15 @@
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1">
 
-<meta name="description" content="Cross Compiling ZeroMQ for Golang on Windows in Centos">
+<meta name="description" content="Managing the death of go applications.">
 <meta name="keywords" content="">
 <meta name="author" content="">
 
-  <meta property="og:title" content="Compiling ZeroMQ for Windows in Centos 7" />
-<meta property="og:description" content="Cross Compiling ZeroMQ for Golang on Windows in Centos" />
+  <meta property="og:title" content="Managing Application Shutdown in Go" />
+<meta property="og:description" content="Managing the death of go applications." />
 <meta property="og:type" content="website" />
 <meta property="og:locale" content="en_US" />
-<meta property="og:url" content="http://vrecan.github.io/post/crosscompile_go_zeromq/" />
+<meta property="og:url" content="http://vrecan.github.io/post/golang_shutdown/" />
 
 
   
@@ -127,17 +127,35 @@
 
 		
 			
+		    <div id="toc" class="pure-u-1 pure-u-md-1-4">
+				<small class="toc-label">Contents</small>
+		   	 	<nav id="TableOfContents">
+<ul>
+<li>
+<ul>
+<li>
+<ul>
+<li><a href="#overview:a3f014005cf18d6d375bffc268e2748e">Overview</a></li>
+<li><a href="#requirements:a3f014005cf18d6d375bffc268e2748e">Requirements</a></li>
+<li><a href="#how-do-you-use-it:a3f014005cf18d6d375bffc268e2748e">How do you use it?</a></li>
+<li><a href="#summary:a3f014005cf18d6d375bffc268e2748e">Summary</a></li>
+</ul></li>
+</ul></li>
+</ul>
+</nav>
+		    </div>
+		    
 	    
   		<section class="post">
             <h1 class="post-title">
-              <a href="http://vrecan.github.io/post/crosscompile_go_zeromq">Compiling ZeroMQ for Windows in Centos 7</a>
+              <a href="http://vrecan.github.io/post/golang_shutdown">Managing Application Shutdown in Go</a>
             </h1>
             <h3 class="post-subtitle">
             	
             </h3>
             
             	<span class="post-date">
-                	<span class="post-date-day"><sup>2</sup></span><span class="post-date-separator">/</span><span class="post-date-month">Mar</span> <span class="post-date-year">2015</span>
+                	<span class="post-date-day"><sup>10</sup></span><span class="post-date-separator">/</span><span class="post-date-month">Mar</span> <span class="post-date-year">2015</span>
             	</span>
             	
             
@@ -157,47 +175,80 @@
 
 			
 
-            <p>I've found it really dificult to find a concrete tutorial for building zeromq for go in windows using MinGW in centos 7. First lets add the epel-release repo.</p>
+            
 
-<pre><code>sudo yum install epel-release
+<h3 id="overview:a3f014005cf18d6d375bffc268e2748e">Overview</h3>
+
+<p>I was looking around and couldn&rsquo;t find a simple library that would manage application shutdown using signals. I decied to build a simple library to handle application shutdown and calling Close methods on structs when shutdown was signaled. It is called <a href="http://github.com/vrecan/death" title="Application shutdown library for golang">death</a>.</p>
+
+<h3 id="requirements:a3f014005cf18d6d375bffc268e2748e">Requirements</h3>
+
+<ul>
+<li>Should only need to pass the signals you want to use for shutdown.</li>
+<li>Block the application from shutting down until signal was recieved.</li>
+<li>Optionally pass structs with a Close method to cleanup objects when shutdown is signaled.</li>
+</ul>
+
+<h3 id="how-do-you-use-it:a3f014005cf18d6d375bffc268e2748e">How do you use it?</h3>
+
+<p>Import death and syscall so that you can pass the signals you want to shutdown with.</p>
+
+<pre><code>package main
+
+import (
+    DEATH &quot;github.com/vrecan/death&quot;
+    SYS &quot;syscall&quot;
+)
 </code></pre>
 
-<p>Now lets install mingw64. For this tutorial I am going to just install all the mingw libraries.</p>
+<p>Now create a death struct with the signals we want to use for shutdown.</p>
 
-<pre><code>sudo yum install mingw64*
+<pre><code>    death := DEATH.NewDeath(SYS.SIGINT, SYS.SIGTERM)
+    defer death.Close()
 </code></pre>
 
-<p> Now lets download and compile zeromq using mingw.</p>
+<p>Once we are doing setting up everything in our application we can then call WaitForDeath() to block our application from shutting down.</p>
 
-<pre><code>wget http://download.zeromq.org/zeromq-4.0.5.zip
-unzip zeromq-4.0.5.zip ~/zeromq
-cd ~/zeromq
-mingw64-configure configure
-mingw64-make
+<pre><code>    death.WaitForDeath()
 </code></pre>
 
-<p>Now lets recompile go so that it is also using the mingw compiler.</p>
+<p>You can also have death automically close structs for you when shutdown is triggered. Create a slice to contain all the items you want to call Close().</p>
 
-<pre><code>cd /usr/local/go/src
-sudo  env CGO_ENABLED=1 GOOS=windows GOARCH=amd64 CC_FOR_TARGET=&quot;x86_64-w64-mingw32-gcc&quot; ./make.bash
+<pre><code>objects := make([]DEATH.Closable, 0)
+
 </code></pre>
 
-<p>Lets move to the go project that you are going to be using with zeromq.</p>
+<p>Your structs just need a Close() method to implement the Closable interface</p>
 
-<pre><code>cd &lt;PROJECT DIR&gt;
-env CGO_ENABLED=1 GOOS=windows GOARCH=amd64 CC_FOR_TARGET=&quot;x86_64-w64-mingw32-gcc&quot; CGO_LDFLAGS=&quot;-L/home/&lt;username&gt;/zeromq/src/.libs -static-libgcc&quot; go build -v -x  -o app.exe
-minigw_bin=/usr/x86_64-w64-mingw32/sys-root/mingw/bin/
+<pre><code>type NewType struct {
+}
+
+func (n *NewType) Close() {
+}
+
 </code></pre>
 
-<p>This should have created an exe binary that is linked to the mingw dll's and your recently compiled version of zeromq. Now lets copy the dll's for the required libraries to the current directory so that we can package this up and put it on a windows box.</p>
+<p>Once your go routine(s) have been started append them to the slice.</p>
 
-<pre><code>cp $minigw_bin/libwinpthread-1.dll .
-cp $minigw_bin/libgcc_s_seh-1.dll .
-cp $minigw_bin/libstdc++-6.dll .
-cp ~/zeromq/src/.libs/libzmq.dll .
+<pre><code>    objects = append(objects, &amp;NewType{})
+
 </code></pre>
 
-<p><p> If you now transfer this folder to a windows(64) 7/8/8.1 box you can now just execute the .exe and have a working go windows application using zeromq.</p>
+<p>Now just pass them in when you are going to call WaitForDeath()</p>
+
+<pre><code>    death.WaitForDeath(objects...)
+</code></pre>
+
+<p>You can also pass them in one by one if you prefer</p>
+
+<pre><code>death.WaitForDeath(object1, object2, object3)
+</code></pre>
+
+<h3 id="summary:a3f014005cf18d6d375bffc268e2748e">Summary</h3>
+
+<p>I&rsquo;m actually pretty happy with this library. It does everything I need it to do and has been really useful to just drop in and have solid shutdown management. It does currently use seelog to log a few things this could easily be removed. All of our applications use seelog for application logs but I would love to hear if there are any good ideas about managing logging inside of libraries. I&rsquo;ve thought about having the ablilty to pass in a logger with an interface but I would like to hear how other people deal with this.</p>
+
+<p><a href="http://github.com/vrecan/death" title="Application shutdown library for golang">Managing death in go</a>.</p>
 
 	
 			
@@ -210,17 +261,9 @@ cp ~/zeromq/src/.libs/libzmq.dll .
 	                
 	                <a class="post-tag post-tag-golang" href="http://vrecan.github.io//tags/golang">GoLang</a>,
 	                
-	                <a class="post-tag post-tag-zeromq" href="http://vrecan.github.io//tags/zeromq">ZeroMQ</a>,
+	                <a class="post-tag post-tag-shutdown" href="http://vrecan.github.io//tags/shutdown">Shutdown</a>,
 	                
-	                <a class="post-tag post-tag-cross-compile" href="http://vrecan.github.io//tags/cross-compile">Cross Compile</a>,
-	                
-	                <a class="post-tag post-tag-mingw" href="http://vrecan.github.io//tags/mingw">MinGW</a>,
-	                
-	                <a class="post-tag post-tag-compile" href="http://vrecan.github.io//tags/compile">Compile</a>,
-	                
-	                <a class="post-tag post-tag-build" href="http://vrecan.github.io//tags/build">Build</a>,
-	                
-	                <a class="post-tag post-tag-centos-7" href="http://vrecan.github.io//tags/centos-7">Centos 7</a>,
+	                <a class="post-tag post-tag-signals" href="http://vrecan.github.io//tags/signals">Signals</a>,
 	                
 				</div>
 			
@@ -229,16 +272,11 @@ cp ~/zeromq/src/.libs/libzmq.dll .
 				<div class="paging">
 					<span class="paging-label">More Reading</span>
 					
-					<div class="paging-newer">
-						<span class="dark-red">Newer</span><span class="decorative-marker">//</span>
-						<a class="paging-link" href="http://vrecan.github.io/post/golang_shutdown">Managing Application Shutdown in Go</a>
-		            </div>
-		            
 
 					
 					<div class="paging-older">
 						<span class="dark-red">Older</span><span class="decorative-marker">//</span>
-			            <a class="paging-link" href="http://vrecan.github.io/post/godep">Go Dependency Management</a>
+			            <a class="paging-link" href="http://vrecan.github.io/post/crosscompile_go_zeromq">Compiling ZeroMQ for Windows in Centos 7</a>
 		            </div>
 		            
 	            </div>
@@ -248,9 +286,9 @@ cp ~/zeromq/src/.libs/libzmq.dll .
           	<div id="disqus_thread"></div>
 <script type="text/javascript">
     var disqus_shortname = 'vrecan';
-    var disqus_identifier = 'http:\/\/vrecan.github.io\/post\/crosscompile_go_zeromq\/';
-    var disqus_title = 'Compiling ZeroMQ for Windows in Centos 7';
-    var disqus_url = 'http:\/\/vrecan.github.io\/post\/crosscompile_go_zeromq\/';
+    var disqus_identifier = 'http:\/\/vrecan.github.io\/post\/golang_shutdown\/';
+    var disqus_title = 'Managing Application Shutdown in Go';
+    var disqus_url = 'http:\/\/vrecan.github.io\/post\/golang_shutdown\/';
 
     (function() {
         var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;

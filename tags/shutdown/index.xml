@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Shutdown on Vrecan...</title>
+    <link>http://vrecan.github.io/tags/shutdown/</link>
+    <description>Recent content in Shutdown on Vrecan...</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language>
+    <lastBuildDate>Tue, 10 Mar 2015 20:23:05 -0600</lastBuildDate>
+    <atom:link href="http://vrecan.github.io/tags/shutdown/index.xml" rel="self" type="application/rss+xml" />
+    
+    <item>
+      <title>Managing Application Shutdown in Go</title>
+      <link>http://vrecan.github.io/post/golang_shutdown/</link>
+      <pubDate>Tue, 10 Mar 2015 20:23:05 -0600</pubDate>
+      
+      <guid>http://vrecan.github.io/post/golang_shutdown/</guid>
+      <description>
+
+&lt;h3 id=&#34;overview:a3f014005cf18d6d375bffc268e2748e&#34;&gt;Overview&lt;/h3&gt;
+
+&lt;p&gt;I was looking around and couldn&amp;rsquo;t find a simple library that would manage application shutdown using signals. I decied to build a simple library to handle application shutdown and calling Close methods on structs when shutdown was signaled. It is called &lt;a href=&#34;http://github.com/vrecan/death&#34; title=&#34;Application shutdown library for golang&#34;&gt;death&lt;/a&gt;.&lt;/p&gt;
+
+&lt;h3 id=&#34;requirements:a3f014005cf18d6d375bffc268e2748e&#34;&gt;Requirements&lt;/h3&gt;
+
+&lt;ul&gt;
+&lt;li&gt;Should only need to pass the signals you want to use for shutdown.&lt;/li&gt;
+&lt;li&gt;Block the application from shutting down until signal was recieved.&lt;/li&gt;
+&lt;li&gt;Optionally pass structs with a Close method to cleanup objects when shutdown is signaled.&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h3 id=&#34;how-do-you-use-it:a3f014005cf18d6d375bffc268e2748e&#34;&gt;How do you use it?&lt;/h3&gt;
+
+&lt;p&gt;Import death and syscall so that you can pass the signals you want to shutdown with.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;package main
+
+import (
+    DEATH &amp;quot;github.com/vrecan/death&amp;quot;
+    SYS &amp;quot;syscall&amp;quot;
+)
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Now create a death struct with the signals we want to use for shutdown.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;    death := DEATH.NewDeath(SYS.SIGINT, SYS.SIGTERM)
+    defer death.Close()
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Once we are doing setting up everything in our application we can then call WaitForDeath() to block our application from shutting down.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;    death.WaitForDeath()
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;You can also have death automically close structs for you when shutdown is triggered. Create a slice to contain all the items you want to call Close().&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;objects := make([]DEATH.Closable, 0)
+
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Your structs just need a Close() method to implement the Closable interface&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;type NewType struct {
+}
+
+func (n *NewType) Close() {
+}
+
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Once your go routine(s) have been started append them to the slice.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;    objects = append(objects, &amp;amp;NewType{})
+
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Now just pass them in when you are going to call WaitForDeath()&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;    death.WaitForDeath(objects...)
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;You can also pass them in one by one if you prefer&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;death.WaitForDeath(object1, object2, object3)
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h3 id=&#34;summary:a3f014005cf18d6d375bffc268e2748e&#34;&gt;Summary&lt;/h3&gt;
+
+&lt;p&gt;I&amp;rsquo;m actually pretty happy with this library. It does everything I need it to do and has been really useful to just drop in and have solid shutdown management. It does currently use seelog to log a few things this could easily be removed. All of our applications use seelog for application logs but I would love to hear if there are any good ideas about managing logging inside of libraries. I&amp;rsquo;ve thought about having the ablilty to pass in a logger with an interface but I would like to hear how other people deal with this.&lt;/p&gt;
+
+&lt;p&gt;&lt;a href=&#34;http://github.com/vrecan/death&#34; title=&#34;Application shutdown library for golang&#34;&gt;Managing death in go&lt;/a&gt;.&lt;/p&gt;
+</description>
+    </item>
+    
+  </channel>
+</rss>
