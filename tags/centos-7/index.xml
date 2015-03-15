@@ -2,19 +2,19 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>Centos 7 on Vrecan...</title>
-    <link>http://vrecan.github.io/tags/centos-7/</link>
+    <link>http://localhost:1313/tags/centos-7/</link>
     <description>Recent content in Centos 7 on Vrecan...</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
     <lastBuildDate>Mon, 02 Mar 2015 20:29:34 -0700</lastBuildDate>
-    <atom:link href="http://vrecan.github.io/tags/centos-7/index.xml" rel="self" type="application/rss+xml" />
+    <atom:link href="http://localhost:1313/tags/centos-7/index.xml" rel="self" type="application/rss+xml" />
     
     <item>
       <title>Compiling ZeroMQ for Windows in Centos 7</title>
-      <link>http://vrecan.github.io/post/crosscompile_go_zeromq/</link>
+      <link>http://localhost:1313/post/crosscompile_go_zeromq/</link>
       <pubDate>Mon, 02 Mar 2015 20:29:34 -0700</pubDate>
       
-      <guid>http://vrecan.github.io/post/crosscompile_go_zeromq/</guid>
+      <guid>http://localhost:1313/post/crosscompile_go_zeromq/</guid>
       <description>&lt;p&gt;I&#39;ve found it really dificult to find a concrete tutorial for building zeromq for go in windows using MinGW in centos 7. First lets add the epel-release repo.&lt;/p&gt;
 
 &lt;pre&gt;&lt;code&gt;sudo yum install epel-release

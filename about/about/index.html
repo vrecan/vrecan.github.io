@@ -19,7 +19,7 @@
 <meta property="og:description" content="" />
 <meta property="og:type" content="website" />
 <meta property="og:locale" content="en_US" />
-<meta property="og:url" content="http://vrecan.github.io/about/about/" />
+<meta property="og:url" content="http://localhost:1313/about/about/" />
 
 
   
@@ -81,7 +81,7 @@
 
     <nav class="nav">
       <ul class="nav-list">
-        <li class="nav-item"><span class="nav-item-separator">//</span><a href="http://vrecan.github.io/">Home</a></li>
+        <li class="nav-item"><span class="nav-item-separator">//</span><a href="http://localhost:1313/">Home</a></li>
         
           <li class="nav-item"><span class="nav-item-separator">//</span><a href="/about/about/">About Me</a></li>
         
@@ -211,9 +211,9 @@
           	<div id="disqus_thread"></div>
 <script type="text/javascript">
     var disqus_shortname = 'vrecan';
-    var disqus_identifier = 'http:\/\/vrecan.github.io\/about\/about\/';
+    var disqus_identifier = 'http:\/\/localhost:1313\/about\/about\/';
     var disqus_title = 'About Me';
-    var disqus_url = 'http:\/\/vrecan.github.io\/about\/about\/';
+    var disqus_url = 'http:\/\/localhost:1313\/about\/about\/';
 
     (function() {
         var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
@@ -242,5 +242,8 @@
 	
 
   
-</body>
+<script>document.write('<script src="http://'
+        + (location.host || 'localhost').split(':')[0]
+		+ ':1313/livereload.js?mindelay=10"></'
+        + 'script>')</script></body>
 </html>
