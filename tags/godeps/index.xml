@@ -2,19 +2,19 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>Godeps on Vrecan...</title>
-    <link>http://localhost:1313/tags/godeps/</link>
+    <link>http://vrecan.github.io/tags/godeps/</link>
     <description>Recent content in Godeps on Vrecan...</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
     <lastBuildDate>Sun, 01 Mar 2015 20:38:08 -0700</lastBuildDate>
-    <atom:link href="http://localhost:1313/tags/godeps/index.xml" rel="self" type="application/rss+xml" />
+    <atom:link href="http://vrecan.github.io/tags/godeps/index.xml" rel="self" type="application/rss+xml" />
     
     <item>
       <title>Go Dependency Management</title>
-      <link>http://localhost:1313/post/godep/</link>
+      <link>http://vrecan.github.io/post/godep/</link>
       <pubDate>Sun, 01 Mar 2015 20:38:08 -0700</pubDate>
       
-      <guid>http://localhost:1313/post/godep/</guid>
+      <guid>http://vrecan.github.io/post/godep/</guid>
       <description>
 
 &lt;p&gt;Godeps is a nice simple tool that allows you to manage dependencies in a very easy way. One major drawback though is that it requires you to commit your dependencies into your repository. This is great for simplicity but horrible for code review. Seeing a commit with 26k files changed really makes it hard to review.&lt;/p&gt;

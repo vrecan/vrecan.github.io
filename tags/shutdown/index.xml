@@ -2,19 +2,19 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>Shutdown on Vrecan...</title>
-    <link>http://localhost:1313/tags/shutdown/</link>
+    <link>http://vrecan.github.io/tags/shutdown/</link>
     <description>Recent content in Shutdown on Vrecan...</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
     <lastBuildDate>Tue, 10 Mar 2015 20:23:05 -0600</lastBuildDate>
-    <atom:link href="http://localhost:1313/tags/shutdown/index.xml" rel="self" type="application/rss+xml" />
+    <atom:link href="http://vrecan.github.io/tags/shutdown/index.xml" rel="self" type="application/rss+xml" />
     
     <item>
       <title>Managing Application Shutdown in Go</title>
-      <link>http://localhost:1313/post/golang_shutdown/</link>
+      <link>http://vrecan.github.io/post/golang_shutdown/</link>
       <pubDate>Tue, 10 Mar 2015 20:23:05 -0600</pubDate>
       
-      <guid>http://localhost:1313/post/golang_shutdown/</guid>
+      <guid>http://vrecan.github.io/post/golang_shutdown/</guid>
       <description>
 
 &lt;h3 id=&#34;overview:a3f014005cf18d6d375bffc268e2748e&#34;&gt;Overview&lt;/h3&gt;
