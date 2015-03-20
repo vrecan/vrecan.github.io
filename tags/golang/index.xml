@@ -6,8 +6,95 @@
     <description>Recent content in Golang on Vrecan...</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Tue, 10 Mar 2015 20:23:05 -0600</lastBuildDate>
+    <lastBuildDate>Thu, 19 Mar 2015 22:11:18 -0600</lastBuildDate>
     <atom:link href="http://vrecan.github.io/tags/golang/index.xml" rel="self" type="application/rss+xml" />
+    
+    <item>
+      <title>Parallel graceful shutdown in golang</title>
+      <link>http://vrecan.github.io/post/death_parallel_shutdown/</link>
+      <pubDate>Thu, 19 Mar 2015 22:11:18 -0600</pubDate>
+      
+      <guid>http://vrecan.github.io/post/death_parallel_shutdown/</guid>
+      <description>
+
+&lt;h3 id=&#34;overview:d43027cab780c369fd9e2e145dc0c7e6&#34;&gt;Overview&lt;/h3&gt;
+
+&lt;p&gt;After using &lt;a href=&#34;http://github.com/vrecan/death&#34;&gt;death&lt;/a&gt; for awhile I started to run into issues closing objects. Mainly that some poorly written code would never close and the app would hang and require me to force kill the app. This seemed like a perfect oppurtunity to use go routines and channels to solve a relatively complex threading problem. What I really want is parallel shutdown with an overall timeout that will shutdown even if something fails.&lt;/p&gt;
+
+&lt;p&gt;&lt;a href=&#34;http://github.com/vrecan/death&#34; title=&#34;Application shutdown library for golang&#34;&gt;Link to github project&lt;/a&gt;.&lt;/p&gt;
+
+&lt;h3 id=&#34;how-does-it-work:d43027cab780c369fd9e2e145dc0c7e6&#34;&gt;How does it work?&lt;/h3&gt;
+
+&lt;p&gt;So lets look at the new Wait for death method&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;//Wait for death and then kill all items that need to die.
+func (d *Death) WaitForDeath(closable ...Closable) {
+	d.wg.Wait()
+	log.Info(&amp;quot;Shutdown started...&amp;quot;)
+	count := len(closable)
+	log.Debug(&amp;quot;Closing &amp;quot;, count, &amp;quot; objects&amp;quot;)
+	if count &amp;gt; 0 {
+		d.closeInMass(closable...)
+	}
+}
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;What you will see here is that now instead of calling close we are now calling this close in mass method.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;//Close all the objects at once and wait forr them to finish with a channel.
+func (d *Death) closeInMass(closable ...Closable) {
+	count := len(closable)
+	//call close async
+	done := make(chan bool, count)
+
+	for _, c := range closable {
+		go d.closeObjects(c, done)
+	}
+
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Close in mass is going to get the size of the slice and then make a channel to receive done messages. This channel will then be passed to a goroutine that sends a message when close is finished.&lt;/p&gt;
+
+&lt;p&gt;Here is what the function looks like&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;//Close objects and return a bool when finished on a channel.
+func (d *Death) closeObjects(c Closable, done chan&amp;lt;- bool) {
+	c.Close()
+	done &amp;lt;- true
+}
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Now we use a timer and a select statement to wait for events on the timer channel and the done channel.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;	//wait on channel for notifications.
+
+	timer := time.NewTimer(d.timeout)
+	for {
+		select {
+		case &amp;lt;-timer.C:
+			log.Warn(count, &amp;quot; object(s) remaining but timer expired.&amp;quot;)
+			return
+		case &amp;lt;-done:
+			count--
+			log.Debug(count, &amp;quot; object(s) left&amp;quot;)
+			if count == 0 {
+				log.Debug(&amp;quot;Finished closing objects&amp;quot;)
+				return
+			}
+		}
+	}
+}
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;This will block until our timer event is triggered or the number of goroutines running equals 0.&lt;/p&gt;
+
+&lt;h1 id=&#34;summary:d43027cab780c369fd9e2e145dc0c7e6&#34;&gt;Summary&lt;/h1&gt;
+
+&lt;p&gt;With this change my applications have seen a 2-3x shutdown speed increase with the benefit of always shutting down even if a bad objects close method never returns.&lt;/p&gt;
+
+&lt;p&gt;&lt;a href=&#34;http://github.com/vrecan/death&#34; title=&#34;Application shutdown library for golang&#34;&gt;Managing death in go&lt;/a&gt;.&lt;/p&gt;
+</description>
+    </item>
     
     <item>
       <title>Managing Application Shutdown in Go</title>
@@ -85,7 +172,8 @@ func (n *NewType) Close() {
 
 &lt;h3 id=&#34;update:a3f014005cf18d6d375bffc268e2748e&#34;&gt;&lt;strong&gt;&lt;em&gt;Update&lt;/em&gt;&lt;/strong&gt;&lt;/h3&gt;
 
-&lt;p&gt;The newest version now does closing of objects in parallel with a timeout. This allows you to limit how long you are willing to wait for shutdown of all your objects. Because they are in parallel this is the total time you are willing to wait and not per object.&lt;/p&gt;
+&lt;p&gt;The newest version now does closing of objects in parallel with a timeout. This allows you to limit how long you are willing to wait for shutdown of all your objects. Because they are in parallel this is the total time you are willing to wait and not per object.
+&lt;a href=&#34;http://vrecan.github.io/post/death_parallel_shutdown/&#34; title=&#34;Application shutdown library for golang&#34;&gt;Parallel shutdown in go&lt;/a&gt;.&lt;/p&gt;
 
 &lt;h3 id=&#34;summary:a3f014005cf18d6d375bffc268e2748e&#34;&gt;Summary&lt;/h3&gt;
 
