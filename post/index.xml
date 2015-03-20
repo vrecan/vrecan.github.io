@@ -44,7 +44,6 @@ import (
 &lt;p&gt;Now create a death struct with the signals we want to use for shutdown.&lt;/p&gt;
 
 &lt;pre&gt;&lt;code&gt;    death := DEATH.NewDeath(SYS.SIGINT, SYS.SIGTERM)
-    defer death.Close()
 &lt;/code&gt;&lt;/pre&gt;
 
 &lt;p&gt;Once we are doing setting up everything in our application we can then call WaitForDeath() to block our application from shutting down.&lt;/p&gt;
@@ -83,6 +82,10 @@ func (n *NewType) Close() {
 
 &lt;pre&gt;&lt;code&gt;death.WaitForDeath(object1, object2, object3)
 &lt;/code&gt;&lt;/pre&gt;
+
+&lt;h3 id=&#34;update:a3f014005cf18d6d375bffc268e2748e&#34;&gt;&lt;strong&gt;&lt;em&gt;Update&lt;/em&gt;&lt;/strong&gt;&lt;/h3&gt;
+
+&lt;p&gt;The newest version now does closing of objects in parallel with a timeout. This allows you to limit how long you are willing to wait for shutdown of all your objects. Because they are in parallel this is the total time you are willing to wait and not per object.&lt;/p&gt;
 
 &lt;h3 id=&#34;summary:a3f014005cf18d6d375bffc268e2748e&#34;&gt;Summary&lt;/h3&gt;
 
