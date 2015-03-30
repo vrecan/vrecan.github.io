@@ -127,6 +127,42 @@
             <header class="post-header">
             
             <h1 class="post-title">
+              <a href="/post/graceful_goroutnes/">Gracefull Shutdown of Goroutines</a>
+            </h1>
+            </header>
+            <p class="post-meta">
+            	
+		          <span class="post-date">
+		            <span class="post-date-day"><sup>29</sup></span><span class="post-date-separator">/</span><span class="post-date-month">Mar</span> <span class="post-date-year">2015</span>
+		          </span>
+      				
+      				
+      					
+      				
+              
+                <span class="post-reading-time"><i class="fa fa-clock-o"></i> <em>3 min. read</em></span>
+              
+      				
+      					<div class="post-categories">
+				        
+      					
+					        <a class="post-category post-category-development" href="http://vrecan.github.io//categories/development">Development</a>
+      					
+      					</div>
+      				
+            </p>
+            <article class="post-summary">
+            	Overview A common problem people new to Go tend to run into is managing goroutines. Starting a goroutine is easy but how do you guarantee it closes gracefully when you are ready to exit? All code for this example lives here. First, lets create a struct that will manage our goroutine. In this case it&rsquo;s just going to be one but there are no restrictions here. //App is an example struct that will run goroutines type App struct { wg *sync.WaitGroup //allow us to wait for close done chan bool Data chan string } func NewApp() (app *App) { app = new(App) app.wg = new(sync.WaitGroup) app.done = make(chan bool, 1) app.Data = make(chan string, 100) return app } With this we can now add a few methods to start and run our goroutine.
+            </article>
+			<div class="read-more-link">
+				<a href="/post/graceful_goroutnes/"><span class="read-more-slashes">//</span>Read More...</a>
+			</div>
+          </section>
+        
+          <section  class="post">
+            <header class="post-header">
+            
+            <h1 class="post-title">
               <a href="/post/death_parallel_shutdown/">Parallel Graceful Shutdown in Go</a>
             </h1>
             </header>

@@ -1,0 +1,372 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en-us">
+<head>
+  <title>
+    Gracefull Shutdown of Goroutines // Vrecan...
+  </title>
+
+  <link href="http://gmpg.org/xfn/11" rel="profile">
+<meta http-equiv="content-type" content="text/html; charset=utf-8">
+
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1">
+
+<meta name="description" content="">
+<meta name="keywords" content="">
+<meta name="author" content="">
+
+  <meta property="og:title" content="Gracefull Shutdown of Goroutines" />
+<meta property="og:description" content="" />
+<meta property="og:type" content="website" />
+<meta property="og:locale" content="en_US" />
+<meta property="og:url" content="http://vrecan.github.io/post/graceful_goroutnes/" />
+
+
+  
+  <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/pure/0.5.0/base-min.css">
+  <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/pure/0.5.0/pure-min.css">
+  
+  
+    <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/pure/0.5.0/grids-responsive-min.css">
+  
+  
+
+  <link rel="stylesheet" href="/css/redlounge.css">
+  <link href="//maxcdn.bootstrapcdn.com/font-awesome/4.2.0/css/font-awesome.min.css" rel="stylesheet">
+  <link href='//fonts.googleapis.com/css?family=Raleway:400,200,100,700,300,500,600,800' rel='stylesheet' type='text/css'>
+  <link href='//fonts.googleapis.com/css?family=Libre+Baskerville:400,700,400italic' rel='stylesheet' type='text/css'>
+
+  
+  <link rel="apple-touch-icon-precomposed" sizes="144x144" href="/touch-icon-144-precomposed.png">
+  <link rel="shortcut icon" href="/favicon.png">
+
+  
+  <link href="" rel="alternate" type="application/rss+xml" title="Vrecan..." />
+
+    
+  
+  <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/8.4/styles/tomorrow-night-bright.min.css">
+  
+  <script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/8.4/highlight.min.js"></script>
+  <script>hljs.initHighlightingOnLoad();</script>
+
+
+  
+
+  
+
+  
+<script>
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+  ga('create', 'UA-60301606-1', 'auto');
+  ga('send', 'pageview');
+
+</script>
+</head>
+
+<body>
+	
+
+	<div id="layout" class="pure-g">
+    <div class="sidebar pure-u-1 pure-u-md-1-4">
+  <div class="header">
+    
+
+    
+    
+
+    <nav class="nav">
+      <ul class="nav-list">
+        <li class="nav-item"><span class="nav-item-separator">//</span><a href="http://vrecan.github.io/">Home</a></li>
+        
+          <li class="nav-item"><span class="nav-item-separator">//</span><a href="/about/about/">About Me</a></li>
+        
+          <li class="nav-item"><span class="nav-item-separator">//</span><a href="/post/">Posts</a></li>
+        
+      </ul>
+    </nav>
+
+    
+    <div class="social-buttons">
+      
+        
+        <a href="http://www.github.com/vrecan" target="_blank"><i class='fa fa-github'></i></a>
+        
+      
+        
+        <a href="http://google.com/&#43;BenAldrich" target="_blank"><i class='fa fa-google-plus'></i></a>
+        
+      
+      
+    </div>
+    
+  </div>
+
+<script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+
+<ins class="adsbygoogle"
+     style="display:block"
+     data-ad-client="ca-pub-8317181959078153"
+     data-ad-slot="3970736822"
+     data-ad-format="auto"></ins>
+<script>
+(adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+</div>
+
+	
+	
+
+    <div class="content pure-u-1 pure-u-md-3-4">
+		<a name="top"></a>
+		
+
+		
+			
+		    <div id="toc" class="pure-u-1 pure-u-md-1-4">
+				<small class="toc-label">Contents</small>
+		   	 	<nav id="TableOfContents">
+<ul>
+<li>
+<ul>
+<li>
+<ul>
+<li><a href="#overview:ec207a846908786b018fd316c62fe3cf">Overview</a></li>
+<li><a href="#conclusion:ec207a846908786b018fd316c62fe3cf">Conclusion</a></li>
+</ul></li>
+</ul></li>
+</ul>
+</nav>
+		    </div>
+		    
+	    
+  		<section class="post">
+            <h1 class="post-title">
+              <a href="/post/graceful_goroutnes/">Gracefull Shutdown of Goroutines</a>
+            </h1>
+            <h3 class="post-subtitle">
+            	
+            </h3>
+            
+            	<span class="post-date">
+                	<span class="post-date-day"><sup>29</sup></span><span class="post-date-separator">/</span><span class="post-date-month">Mar</span> <span class="post-date-year">2015</span>
+            	</span>
+            	
+            
+            	
+            
+
+			
+			
+				<div class="post-categories">
+				
+					<a class="post-category post-category-development" href="http://vrecan.github.io//categories/development">Development</a>
+				
+				</div>
+			
+
+			
+		    	<div class="social-sharing">
+	<a class="share-button-facebook" onClick="return popupShare(this.href);" href="https://www.facebook.com/sharer/sharer.php?u=http%3a%2f%2fvrecan.github.io%2fpost%2fgraceful_goroutnes%2f" target="_blank"><i class="fa fa-facebook"><span>Like</span></i></a>
+	<a class="share-button-google-plus" onClick="return popupShare(this.href);" href="https://plus.google.com/share?url=http%3a%2f%2fvrecan.github.io%2fpost%2fgraceful_goroutnes%2f" target="_blank"><i class="fa fa-google-plus"><span>Google +1</span></i></a>
+	<a class="share-button-linkedin" onClick="return popupShare(this.href);" href="http://www.linkedin.com/shareArticle?mini=true&url=http%3a%2f%2fvrecan.github.io%2fpost%2fgraceful_goroutnes%2f&title=Gracefull%20Shutdown%20of%20Goroutines&summary=Overview%20A%20common%20problem%20people%20new%20to%20Go%20tend%20to%20run%20into%20is%20managing%20goroutines.%20Starting%20a%20goroutine%20is%20easy%20but%20how%20do%20you%20guarantee%20it%20closes%20gracefully%20when%20you%20are%20ready%20to%20exit%3f%20All%20code%20for%20this%20example%20lives%20here.%20First%2c%20lets%20create%20a%20struct%20that%20will%20manage%20our%20goroutine.%20In%20this%20case%20it%26rsquo%3bs%20just%20going%20to%20be%20one%20but%20there%20are%20no%20restrictions%20here.%20%2f%2fApp%20is%20an%20example%20struct%20that%20will%20run%20goroutines%20type%20App%20struct%20%7b%20wg%20%2async.WaitGroup%20%2f%2fallow%20us%20to%20wait%20for%20close%20done%20chan%20bool%20Data%20chan%20string%20%7d%20func%20NewApp%28%29%20%28app%20%2aApp%29%20%7b%20app%20%3d%20new%28App%29%20app.wg%20%3d%20new%28sync.WaitGroup%29%20app.done%20%3d%20make%28chan%20bool%2c%201%29%20app.Data%20%3d%20make%28chan%20string%2c%20100%29%20return%20app%20%7d%20With%20this%20we%20can%20now%20add%20a%20few%20methods%20to%20start%20and%20run%20our%20goroutine.}&source=Vrecan..." target="_blank"><i class="fa fa-linkedin"><span>Share on LinkedIn</span></i></a>
+	<a class="share-button-twitter" onClick="return popupShare(this.href);" href="http://twitter.com/share?text=Gracefull%20Shutdown%20of%20Goroutines&url=http%3a%2f%2fvrecan.github.io%2fpost%2fgraceful_goroutnes%2f" target="_blank"><i class="fa fa-twitter"><span>Tweet</span></i></a>	
+</div>
+		    
+
+			
+
+            
+
+<h3 id="overview:ec207a846908786b018fd316c62fe3cf">Overview</h3>
+
+<p>A common problem people new to Go tend to run into is managing goroutines. Starting a goroutine is easy but how do you guarantee it closes gracefully when you are ready to exit? All code for this example lives <a href="https://github.com/vrecan/shutdown_example">here</a>.</p>
+
+<p>First, lets create a struct that will manage our goroutine. In this case it&rsquo;s just going to be one but there are no restrictions here.</p>
+
+<pre><code>
+//App is an example struct that will run goroutines
+type App struct {
+	wg   *sync.WaitGroup //allow us to wait for close
+	done chan bool
+	Data chan string
+}
+
+func NewApp() (app *App) {
+	app = new(App)
+	app.wg = new(sync.WaitGroup)
+	app.done = make(chan bool, 1)
+	app.Data = make(chan string, 100)
+	return app
+}
+</code></pre>
+
+<p>With this we can now add a few methods to start and run our goroutine. First, our start method which will increment our wait group and run our goroutine. It&rsquo;s important to increment the wait group before you spin up the goroutine otherwise you can have a race condition on close.</p>
+
+<pre><code>//Start go routines
+func (a *App) Start() {
+	a.wg.Add(1)
+	go a.runSelect()
+}
+</code></pre>
+
+<p>There are two main ways to handle signaling for shutdown. This example shows both for completeness. The first thing we are doing is using a channel called done in a select statement which allows us to get a signal from something external telling us it&rsquo;s time for shutdown.</p>
+
+<p>The other way of managing shutdown of a goroutine is to just close it when you are done sending things to the channel. The benefit of this approach is that you will always process all of the messages before you exit. Obviously this could be a negative as well if you don&rsquo;t want to process everything on the queue before a shutdown.</p>
+
+<pre><code>//Run with select statement to manage shutdown
+func (a *App) runSelect() {
+	defer a.wg.Done()
+loop:
+	for {
+		select {
+
+		case &lt;-a.done:
+			fmt.Println(&quot;Detected close doing cleanup and exiting&quot;)
+			a.wg.Add(1)
+			a.runClose()
+			break loop
+			//do cleanup if needed
+		case s, ok := &lt;-a.Data:
+			if ok { //ok will tell us if the channel has been shutdown
+				fmt.Println(&quot;select: &quot;, s)
+			} else {
+				//done processing all messages exit
+				fmt.Println(&quot;Breaking loop&quot;)
+				break loop
+			}
+		}
+	}
+}
+//process all messaging on the queue until we get close message
+func (a *App) runClose() {
+	for s := range a.Data {
+		fmt.Println(&quot;close: &quot;, s)
+	}
+}
+</code></pre>
+
+<p>Now it&rsquo;s time for our simple close method that will send our done signal and
+also close our channel. <strong><em>In a real application you want to make sure to only close a Go channel after you can guarantee all the senders are done.</em></strong> Go channels will panic if you try to send to a closed channel.</p>
+
+<pre><code>//Cleanly close background routines
+func (a *App) Close() {
+	if a != nil {
+		a.done &lt;- true
+		close(a.Data) //this lets the recv know there is no more data
+		a.wg.Wait()
+	}
+}
+</code></pre>
+
+<p>Example main loop for completeness.</p>
+
+<pre><code>//Simple example on managing shutdown
+func main() {
+	death := DEATH.NewDeath(SYS.SIGINT, SYS.SIGTERM)
+	app := NewApp()
+	app.Start()
+	// app.Start()
+	for i := 1; i &lt;= 100; i++ {
+		app.Data &lt;- fmt.Sprintf(&quot;TESTING %d&quot;, i)
+	}
+	//use death
+	death.WaitForDeath(app)
+	//or call close manually
+	//app.Close()
+}
+</code></pre>
+
+<h3 id="conclusion:ec207a846908786b018fd316c62fe3cf">Conclusion</h3>
+
+<p>I hope this example was useful. Every new Go developer I train seems to get stuck on managing closing goroutines and this information has been helpful in explaining the pitfalls of common Go patterns to shutdown.</p>
+
+<p><a href="https://github.com/vrecan/shutdown_example">Link to code</a></p>
+
+	
+			
+		    	<div class="social-sharing">
+	<a class="share-button-facebook" onClick="return popupShare(this.href);" href="https://www.facebook.com/sharer/sharer.php?u=http%3a%2f%2fvrecan.github.io%2fpost%2fgraceful_goroutnes%2f" target="_blank"><i class="fa fa-facebook"><span>Like</span></i></a>
+	<a class="share-button-google-plus" onClick="return popupShare(this.href);" href="https://plus.google.com/share?url=http%3a%2f%2fvrecan.github.io%2fpost%2fgraceful_goroutnes%2f" target="_blank"><i class="fa fa-google-plus"><span>Google +1</span></i></a>
+	<a class="share-button-linkedin" onClick="return popupShare(this.href);" href="http://www.linkedin.com/shareArticle?mini=true&url=http%3a%2f%2fvrecan.github.io%2fpost%2fgraceful_goroutnes%2f&title=Gracefull%20Shutdown%20of%20Goroutines&summary=Overview%20A%20common%20problem%20people%20new%20to%20Go%20tend%20to%20run%20into%20is%20managing%20goroutines.%20Starting%20a%20goroutine%20is%20easy%20but%20how%20do%20you%20guarantee%20it%20closes%20gracefully%20when%20you%20are%20ready%20to%20exit%3f%20All%20code%20for%20this%20example%20lives%20here.%20First%2c%20lets%20create%20a%20struct%20that%20will%20manage%20our%20goroutine.%20In%20this%20case%20it%26rsquo%3bs%20just%20going%20to%20be%20one%20but%20there%20are%20no%20restrictions%20here.%20%2f%2fApp%20is%20an%20example%20struct%20that%20will%20run%20goroutines%20type%20App%20struct%20%7b%20wg%20%2async.WaitGroup%20%2f%2fallow%20us%20to%20wait%20for%20close%20done%20chan%20bool%20Data%20chan%20string%20%7d%20func%20NewApp%28%29%20%28app%20%2aApp%29%20%7b%20app%20%3d%20new%28App%29%20app.wg%20%3d%20new%28sync.WaitGroup%29%20app.done%20%3d%20make%28chan%20bool%2c%201%29%20app.Data%20%3d%20make%28chan%20string%2c%20100%29%20return%20app%20%7d%20With%20this%20we%20can%20now%20add%20a%20few%20methods%20to%20start%20and%20run%20our%20goroutine.}&source=Vrecan..." target="_blank"><i class="fa fa-linkedin"><span>Share on LinkedIn</span></i></a>
+	<a class="share-button-twitter" onClick="return popupShare(this.href);" href="http://twitter.com/share?text=Gracefull%20Shutdown%20of%20Goroutines&url=http%3a%2f%2fvrecan.github.io%2fpost%2fgraceful_goroutnes%2f" target="_blank"><i class="fa fa-twitter"><span>Tweet</span></i></a>	
+</div>
+		    
+
+			
+				<div class="tags-list">
+					<span class="dark-red">Tags</span><span class="decorative-marker">//</span>
+					
+	                <a class="post-tag post-tag-development" href="http://vrecan.github.io//tags/development">Development</a>,
+	                
+	                <a class="post-tag post-tag-golang" href="http://vrecan.github.io//tags/golang">GoLang</a>,
+	                
+	                <a class="post-tag post-tag-waitgroup" href="http://vrecan.github.io//tags/waitgroup">WaitGroup</a>,
+	                
+	                <a class="post-tag post-tag-channels" href="http://vrecan.github.io//tags/channels">Channels</a>,
+	                
+				</div>
+			
+
+			
+				<div class="paging">
+					<span class="paging-label">More Reading</span>
+					
+
+					
+					<div class="paging-older">
+						<span class="dark-red">Older</span><span class="decorative-marker">//</span>
+			            <a class="paging-link" href="/post/death_parallel_shutdown/">Parallel Graceful Shutdown in Go</a>
+		            </div>
+		            
+	            </div>
+            
+          </section>
+          
+          	<div id="disqus_thread"></div>
+<script type="text/javascript">
+    var disqus_shortname = 'vrecan';
+    var disqus_identifier = 'http:\/\/vrecan.github.io\/post\/graceful_goroutnes\/';
+    var disqus_title = 'Gracefull Shutdown of Goroutines';
+    var disqus_url = 'http:\/\/vrecan.github.io\/post\/graceful_goroutnes\/';
+
+    (function() {
+        var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+        dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+<a href="http://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+          
+        
+      <div class="footer">
+	<hr class="thin" />
+	<div class="pure-menu pure-menu-horizontal pure-menu-open">
+		<ul class="footer-menu">
+		
+		</ul>
+	</div>
+
+	<p>&copy; 2015. All rights reserved. </p>
+</div>
+    </div>
+  </div>
+	
+
+	
+		<script type="text/javascript">
+			function popupShare(url) {
+				window.open(url, '_blank', 'scrollbars,resizable,height=525,width=600');
+				return false;
+			}
+		</script>
+	
+
+  
+</body>
+</html>

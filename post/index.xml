@@ -6,8 +6,123 @@
     <description>Recent content in Posts on Vrecan...</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Thu, 19 Mar 2015 22:11:18 -0600</lastBuildDate>
+    <lastBuildDate>Sun, 29 Mar 2015 16:38:08 -0700</lastBuildDate>
     <atom:link href="http://vrecan.github.io/post/index.xml" rel="self" type="application/rss+xml" />
+    
+    <item>
+      <title>Gracefull Shutdown of Goroutines</title>
+      <link>http://vrecan.github.io/post/graceful_goroutnes/</link>
+      <pubDate>Sun, 29 Mar 2015 16:38:08 -0700</pubDate>
+      
+      <guid>http://vrecan.github.io/post/graceful_goroutnes/</guid>
+      <description>
+
+&lt;h3 id=&#34;overview:ec207a846908786b018fd316c62fe3cf&#34;&gt;Overview&lt;/h3&gt;
+
+&lt;p&gt;A common problem people new to Go tend to run into is managing goroutines. Starting a goroutine is easy but how do you guarantee it closes gracefully when you are ready to exit? All code for this example lives &lt;a href=&#34;https://github.com/vrecan/shutdown_example&#34;&gt;here&lt;/a&gt;.&lt;/p&gt;
+
+&lt;p&gt;First, lets create a struct that will manage our goroutine. In this case it&amp;rsquo;s just going to be one but there are no restrictions here.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;
+//App is an example struct that will run goroutines
+type App struct {
+	wg   *sync.WaitGroup //allow us to wait for close
+	done chan bool
+	Data chan string
+}
+
+func NewApp() (app *App) {
+	app = new(App)
+	app.wg = new(sync.WaitGroup)
+	app.done = make(chan bool, 1)
+	app.Data = make(chan string, 100)
+	return app
+}
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;With this we can now add a few methods to start and run our goroutine. First, our start method which will increment our wait group and run our goroutine. It&amp;rsquo;s important to increment the wait group before you spin up the goroutine otherwise you can have a race condition on close.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;//Start go routines
+func (a *App) Start() {
+	a.wg.Add(1)
+	go a.runSelect()
+}
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;There are two main ways to handle signaling for shutdown. This example shows both for completeness. The first thing we are doing is using a channel called done in a select statement which allows us to get a signal from something external telling us it&amp;rsquo;s time for shutdown.&lt;/p&gt;
+
+&lt;p&gt;The other way of managing shutdown of a goroutine is to just close it when you are done sending things to the channel. The benefit of this approach is that you will always process all of the messages before you exit. Obviously this could be a negative as well if you don&amp;rsquo;t want to process everything on the queue before a shutdown.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;//Run with select statement to manage shutdown
+func (a *App) runSelect() {
+	defer a.wg.Done()
+loop:
+	for {
+		select {
+
+		case &amp;lt;-a.done:
+			fmt.Println(&amp;quot;Detected close doing cleanup and exiting&amp;quot;)
+			a.wg.Add(1)
+			a.runClose()
+			break loop
+			//do cleanup if needed
+		case s, ok := &amp;lt;-a.Data:
+			if ok { //ok will tell us if the channel has been shutdown
+				fmt.Println(&amp;quot;select: &amp;quot;, s)
+			} else {
+				//done processing all messages exit
+				fmt.Println(&amp;quot;Breaking loop&amp;quot;)
+				break loop
+			}
+		}
+	}
+}
+//process all messaging on the queue until we get close message
+func (a *App) runClose() {
+	for s := range a.Data {
+		fmt.Println(&amp;quot;close: &amp;quot;, s)
+	}
+}
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Now it&amp;rsquo;s time for our simple close method that will send our done signal and
+also close our channel. &lt;strong&gt;&lt;em&gt;In a real application you want to make sure to only close a Go channel after you can guarantee all the senders are done.&lt;/em&gt;&lt;/strong&gt; Go channels will panic if you try to send to a closed channel.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;//Cleanly close background routines
+func (a *App) Close() {
+	if a != nil {
+		a.done &amp;lt;- true
+		close(a.Data) //this lets the recv know there is no more data
+		a.wg.Wait()
+	}
+}
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Example main loop for completeness.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;//Simple example on managing shutdown
+func main() {
+	death := DEATH.NewDeath(SYS.SIGINT, SYS.SIGTERM)
+	app := NewApp()
+	app.Start()
+	// app.Start()
+	for i := 1; i &amp;lt;= 100; i++ {
+		app.Data &amp;lt;- fmt.Sprintf(&amp;quot;TESTING %d&amp;quot;, i)
+	}
+	//use death
+	death.WaitForDeath(app)
+	//or call close manually
+	//app.Close()
+}
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h3 id=&#34;conclusion:ec207a846908786b018fd316c62fe3cf&#34;&gt;Conclusion&lt;/h3&gt;
+
+&lt;p&gt;I hope this example was useful. Every new Go developer I train seems to get stuck on managing closing goroutines and this information has been helpful in explaining the pitfalls of common Go patterns to shutdown.&lt;/p&gt;
+
+&lt;p&gt;&lt;a href=&#34;https://github.com/vrecan/shutdown_example&#34;&gt;Link to code&lt;/a&gt;&lt;/p&gt;
+</description>
+    </item>
     
     <item>
       <title>Parallel Graceful Shutdown in Go</title>

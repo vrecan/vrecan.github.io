@@ -2,7 +2,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en-us">
 <head>
   <title>
-    Abouts // Vrecan...
+    Waitgroup // Vrecan...
   </title>
 
   <link href="http://gmpg.org/xfn/11" rel="profile">
@@ -15,11 +15,11 @@
 <meta name="keywords" content="">
 <meta name="author" content="">
 
-  <meta property="og:title" content="Abouts" />
+  <meta property="og:title" content="Waitgroup" />
 <meta property="og:description" content="" />
 <meta property="og:type" content="website" />
 <meta property="og:locale" content="en_US" />
-<meta property="og:url" content="http://vrecan.github.io/about/" />
+<meta property="og:url" content="http://vrecan.github.io/tags/waitgroup/" />
 
 
   
@@ -41,7 +41,7 @@
   <link rel="shortcut icon" href="/favicon.png">
 
   
-  <link href="http://vrecan.github.io/about/index.xml" rel="alternate" type="application/rss+xml" title="Vrecan..." />
+  <link href="http://vrecan.github.io/tags/waitgroup/index.xml" rel="alternate" type="application/rss+xml" title="Vrecan..." />
 
     
   
@@ -127,28 +127,35 @@
             <header class="post-header">
             
             <h1 class="post-title">
-              <a href="/about/about/">About Me</a>
+              <a href="/post/graceful_goroutnes/">Gracefull Shutdown of Goroutines</a>
             </h1>
             </header>
             <p class="post-meta">
             	
 		          <span class="post-date">
-		            <span class="post-date-day"><sup>1</sup></span><span class="post-date-separator">/</span><span class="post-date-month">Mar</span> <span class="post-date-year">2015</span>
+		            <span class="post-date-day"><sup>29</sup></span><span class="post-date-separator">/</span><span class="post-date-month">Mar</span> <span class="post-date-year">2015</span>
 		          </span>
       				
       				
       					
       				
               
-                <span class="post-reading-time"><i class="fa fa-clock-o"></i> <em>1 min. read</em></span>
+                <span class="post-reading-time"><i class="fa fa-clock-o"></i> <em>3 min. read</em></span>
               
+      				
+      					<div class="post-categories">
+				        
+      					
+					        <a class="post-category post-category-development" href="http://vrecan.github.io//categories/development">Development</a>
+      					
+      					</div>
       				
             </p>
             <article class="post-summary">
-            	I'm Ben Aldrich, I am a principle software engineer at Logrhythm specializing in big data and clustering software. With over 10 years of experience building high performance software. Programming Languages Go C++ Java C PHP Perl Recent Software Projects Managing death in go Simple zeromq push relay IOStat that reports over zeromq or nanomsg Logrhythm Network Monitor
+            	Overview A common problem people new to Go tend to run into is managing goroutines. Starting a goroutine is easy but how do you guarantee it closes gracefully when you are ready to exit? All code for this example lives here. First, lets create a struct that will manage our goroutine. In this case it&rsquo;s just going to be one but there are no restrictions here. //App is an example struct that will run goroutines type App struct { wg *sync.WaitGroup //allow us to wait for close done chan bool Data chan string } func NewApp() (app *App) { app = new(App) app.wg = new(sync.WaitGroup) app.done = make(chan bool, 1) app.Data = make(chan string, 100) return app } With this we can now add a few methods to start and run our goroutine.
             </article>
 			<div class="read-more-link">
-				<a href="/about/about/"><span class="read-more-slashes">//</span>Read More...</a>
+				<a href="/post/graceful_goroutnes/"><span class="read-more-slashes">//</span>Read More...</a>
 			</div>
           </section>
         
