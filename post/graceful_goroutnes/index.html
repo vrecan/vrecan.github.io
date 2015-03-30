@@ -94,11 +94,11 @@
     <div class="social-buttons">
       
         
-        <a href="http://www.github.com/vrecan" target="_blank"><i class='fa fa-github'></i></a>
+        <a href="http://google.com/&#43;BenAldrich" target="_blank"><i class='fa fa-google-plus'></i></a>
         
       
         
-        <a href="http://google.com/&#43;BenAldrich" target="_blank"><i class='fa fa-google-plus'></i></a>
+        <a href="http://www.github.com/vrecan" target="_blank"><i class='fa fa-github'></i></a>
         
       
       
@@ -173,7 +173,7 @@
 		    	<div class="social-sharing">
 	<a class="share-button-facebook" onClick="return popupShare(this.href);" href="https://www.facebook.com/sharer/sharer.php?u=http%3a%2f%2fvrecan.github.io%2fpost%2fgraceful_goroutnes%2f" target="_blank"><i class="fa fa-facebook"><span>Like</span></i></a>
 	<a class="share-button-google-plus" onClick="return popupShare(this.href);" href="https://plus.google.com/share?url=http%3a%2f%2fvrecan.github.io%2fpost%2fgraceful_goroutnes%2f" target="_blank"><i class="fa fa-google-plus"><span>Google +1</span></i></a>
-	<a class="share-button-linkedin" onClick="return popupShare(this.href);" href="http://www.linkedin.com/shareArticle?mini=true&url=http%3a%2f%2fvrecan.github.io%2fpost%2fgraceful_goroutnes%2f&title=Gracefull%20Shutdown%20of%20Goroutines&summary=Overview%20A%20common%20problem%20people%20new%20to%20Go%20tend%20to%20run%20into%20is%20managing%20goroutines.%20Starting%20a%20goroutine%20is%20easy%20but%20how%20do%20you%20guarantee%20it%20closes%20gracefully%20when%20you%20are%20ready%20to%20exit%3f%20All%20code%20for%20this%20example%20lives%20here.%20First%2c%20lets%20create%20a%20struct%20that%20will%20manage%20our%20goroutine.%20In%20this%20case%20it%26rsquo%3bs%20just%20going%20to%20be%20one%20but%20there%20are%20no%20restrictions%20here.%20%2f%2fApp%20is%20an%20example%20struct%20that%20will%20run%20goroutines%20type%20App%20struct%20%7b%20wg%20%2async.WaitGroup%20%2f%2fallow%20us%20to%20wait%20for%20close%20done%20chan%20bool%20Data%20chan%20string%20%7d%20func%20NewApp%28%29%20%28app%20%2aApp%29%20%7b%20app%20%3d%20new%28App%29%20app.wg%20%3d%20new%28sync.WaitGroup%29%20app.done%20%3d%20make%28chan%20bool%2c%201%29%20app.Data%20%3d%20make%28chan%20string%2c%20100%29%20return%20app%20%7d%20With%20this%20we%20can%20now%20add%20a%20few%20methods%20to%20start%20and%20run%20our%20goroutine.}&source=Vrecan..." target="_blank"><i class="fa fa-linkedin"><span>Share on LinkedIn</span></i></a>
+	<a class="share-button-linkedin" onClick="return popupShare(this.href);" href="http://www.linkedin.com/shareArticle?mini=true&url=http%3a%2f%2fvrecan.github.io%2fpost%2fgraceful_goroutnes%2f&title=Gracefull%20Shutdown%20of%20Goroutines&summary=Overview%20A%20common%20problem%20people%20new%20to%20Go%20tend%20to%20run%20into%20is%20managing%20goroutines.%20Starting%20a%20goroutine%20is%20easy%20but%20how%20do%20you%20guarantee%20it%20closes%20gracefully%20when%20you%20are%20ready%20to%20exit%3f%20All%20code%20for%20this%20example%20lives%20here.%20First%2c%20lets%20create%20a%20struct%20that%20will%20manage%20our%20goroutine.%20In%20this%20case%20it%26rsquo%3bs%20just%20going%20to%20be%20one%20but%20there%20are%20no%20restrictions%20here.%20%2f%2fApp%20is%20an%20example%20struct%20that%20will%20run%20goroutines%20type%20App%20struct%20%7b%20wg%20%2async.WaitGroup%20%2f%2fallow%20us%20to%20wait%20for%20close%20done%20chan%20bool%20Data%20chan%20string%20%7d%20func%20NewApp%28%29%20%28app%20%2aApp%29%20%7b%20app%20%3d%20%26amp%3bApp%7b%20wg%3a%20%26amp%3bsync.WaitGroup%7b%7d%2c%20done%3a%20make%28chan%20bool%2c%201%29%2c%20Data%3a%20make%28chan%20string%2c%20100%29%2c%20%7d%20return%20app%20%7d%20With%20this%20we%20can%20now%20add%20a%20few%20methods%20to%20start%20and%20run%20our%20goroutine.}&source=Vrecan..." target="_blank"><i class="fa fa-linkedin"><span>Share on LinkedIn</span></i></a>
 	<a class="share-button-twitter" onClick="return popupShare(this.href);" href="http://twitter.com/share?text=Gracefull%20Shutdown%20of%20Goroutines&url=http%3a%2f%2fvrecan.github.io%2fpost%2fgraceful_goroutnes%2f" target="_blank"><i class="fa fa-twitter"><span>Tweet</span></i></a>	
 </div>
 		    
@@ -197,10 +197,11 @@ type App struct {
 }
 
 func NewApp() (app *App) {
-	app = new(App)
-	app.wg = new(sync.WaitGroup)
-	app.done = make(chan bool, 1)
-	app.Data = make(chan string, 100)
+	app = &amp;App{
+		wg:   &amp;sync.WaitGroup{},
+		done: make(chan bool, 1),
+		Data: make(chan string, 100),
+	}
 	return app
 }
 </code></pre>
@@ -292,7 +293,7 @@ func main() {
 		    	<div class="social-sharing">
 	<a class="share-button-facebook" onClick="return popupShare(this.href);" href="https://www.facebook.com/sharer/sharer.php?u=http%3a%2f%2fvrecan.github.io%2fpost%2fgraceful_goroutnes%2f" target="_blank"><i class="fa fa-facebook"><span>Like</span></i></a>
 	<a class="share-button-google-plus" onClick="return popupShare(this.href);" href="https://plus.google.com/share?url=http%3a%2f%2fvrecan.github.io%2fpost%2fgraceful_goroutnes%2f" target="_blank"><i class="fa fa-google-plus"><span>Google +1</span></i></a>
-	<a class="share-button-linkedin" onClick="return popupShare(this.href);" href="http://www.linkedin.com/shareArticle?mini=true&url=http%3a%2f%2fvrecan.github.io%2fpost%2fgraceful_goroutnes%2f&title=Gracefull%20Shutdown%20of%20Goroutines&summary=Overview%20A%20common%20problem%20people%20new%20to%20Go%20tend%20to%20run%20into%20is%20managing%20goroutines.%20Starting%20a%20goroutine%20is%20easy%20but%20how%20do%20you%20guarantee%20it%20closes%20gracefully%20when%20you%20are%20ready%20to%20exit%3f%20All%20code%20for%20this%20example%20lives%20here.%20First%2c%20lets%20create%20a%20struct%20that%20will%20manage%20our%20goroutine.%20In%20this%20case%20it%26rsquo%3bs%20just%20going%20to%20be%20one%20but%20there%20are%20no%20restrictions%20here.%20%2f%2fApp%20is%20an%20example%20struct%20that%20will%20run%20goroutines%20type%20App%20struct%20%7b%20wg%20%2async.WaitGroup%20%2f%2fallow%20us%20to%20wait%20for%20close%20done%20chan%20bool%20Data%20chan%20string%20%7d%20func%20NewApp%28%29%20%28app%20%2aApp%29%20%7b%20app%20%3d%20new%28App%29%20app.wg%20%3d%20new%28sync.WaitGroup%29%20app.done%20%3d%20make%28chan%20bool%2c%201%29%20app.Data%20%3d%20make%28chan%20string%2c%20100%29%20return%20app%20%7d%20With%20this%20we%20can%20now%20add%20a%20few%20methods%20to%20start%20and%20run%20our%20goroutine.}&source=Vrecan..." target="_blank"><i class="fa fa-linkedin"><span>Share on LinkedIn</span></i></a>
+	<a class="share-button-linkedin" onClick="return popupShare(this.href);" href="http://www.linkedin.com/shareArticle?mini=true&url=http%3a%2f%2fvrecan.github.io%2fpost%2fgraceful_goroutnes%2f&title=Gracefull%20Shutdown%20of%20Goroutines&summary=Overview%20A%20common%20problem%20people%20new%20to%20Go%20tend%20to%20run%20into%20is%20managing%20goroutines.%20Starting%20a%20goroutine%20is%20easy%20but%20how%20do%20you%20guarantee%20it%20closes%20gracefully%20when%20you%20are%20ready%20to%20exit%3f%20All%20code%20for%20this%20example%20lives%20here.%20First%2c%20lets%20create%20a%20struct%20that%20will%20manage%20our%20goroutine.%20In%20this%20case%20it%26rsquo%3bs%20just%20going%20to%20be%20one%20but%20there%20are%20no%20restrictions%20here.%20%2f%2fApp%20is%20an%20example%20struct%20that%20will%20run%20goroutines%20type%20App%20struct%20%7b%20wg%20%2async.WaitGroup%20%2f%2fallow%20us%20to%20wait%20for%20close%20done%20chan%20bool%20Data%20chan%20string%20%7d%20func%20NewApp%28%29%20%28app%20%2aApp%29%20%7b%20app%20%3d%20%26amp%3bApp%7b%20wg%3a%20%26amp%3bsync.WaitGroup%7b%7d%2c%20done%3a%20make%28chan%20bool%2c%201%29%2c%20Data%3a%20make%28chan%20string%2c%20100%29%2c%20%7d%20return%20app%20%7d%20With%20this%20we%20can%20now%20add%20a%20few%20methods%20to%20start%20and%20run%20our%20goroutine.}&source=Vrecan..." target="_blank"><i class="fa fa-linkedin"><span>Share on LinkedIn</span></i></a>
 	<a class="share-button-twitter" onClick="return popupShare(this.href);" href="http://twitter.com/share?text=Gracefull%20Shutdown%20of%20Goroutines&url=http%3a%2f%2fvrecan.github.io%2fpost%2fgraceful_goroutnes%2f" target="_blank"><i class="fa fa-twitter"><span>Tweet</span></i></a>	
 </div>
 		    
