@@ -6,8 +6,303 @@
     <description>Recent content on Vrecan...</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Sun, 29 Mar 2015 16:38:08 -0700</lastBuildDate>
+    <lastBuildDate>Mon, 28 Dec 2015 16:38:08 -0700</lastBuildDate>
     <atom:link href="http://vrecan.github.io/index.xml" rel="self" type="application/rss+xml" />
+    
+    <item>
+      <title>InfluxDB Terminal Dashboards with FluxDash</title>
+      <link>http://vrecan.github.io/post/intro_fluxdash/</link>
+      <pubDate>Mon, 28 Dec 2015 16:38:08 -0700</pubDate>
+      
+      <guid>http://vrecan.github.io/post/intro_fluxdash/</guid>
+      <description>
+
+&lt;h3 id=&#34;overview:890ca4461a7712ff7ba32a852ca76ffd&#34;&gt;Overview&lt;/h3&gt;
+
+&lt;p&gt;&lt;a href=&#34;https://github.com/vrecan/FluxDash&#34;&gt;FluxDash&lt;/a&gt; is a dashboard terminal ui that is fully configurable through json files. You can either give it an indivudual json file or a folder and it will read any json file in the folder and attemp to turn it into a dashboard. You can then move between dashboard by pressing &lt;N&gt;.&lt;/p&gt;
+
+&lt;h3 id=&#34;features:890ca4461a7712ff7ba32a852ca76ffd&#34;&gt;Features&lt;/h3&gt;
+
+&lt;ul&gt;
+&lt;li&gt;Sparklines&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;Sparklines are a simplified single stat linechart that gives you basic trending over time.
+Example json:&lt;/p&gt;
+
+&lt;pre&gt;
+    &lt;code class=&#34;json-css&#34;&gt;
+&#34;sparklines&#34;: {
+    &#34;Height&#34;: 1,
+    &#34;lines&#34;: [{
+        &#34;from&#34;: &#34;/system.cpu/&#34;,
+        &#34;title&#34;: &#34;CPU&#34;,
+        &#34;where&#34;: &#34;&#34;, 
+        &#34;type&#34;: 2,
+
+        &#34;height&#34;: 1,
+        &#34;linecolor&#34;: 5,
+        &#34;titlecolor&#34;: 0
+    }, {
+        &#34;from&#34;: &#34;/system.mem.free/&#34;,
+        &#34;title&#34;: &#34;System Free memory&#34;,
+        &#34;type&#34;: 3,
+        &#34;height&#34;: 1
+    }, {
+        &#34;from&#34;: &#34;/system.mem.cached/&#34;,
+        &#34;title&#34;: &#34;System Cached memory&#34;,
+        &#34;type&#34;: 3,
+        &#34;height&#34;: 1
+    }, {
+        &#34;from&#34;: &#34;/system.mem.buffers/&#34;,
+        &#34;title&#34;: &#34;System Buffers memory&#34;,
+        &#34;type&#34;: 3,
+        &#34;height&#34;: 1
+    }]
+}
+&lt;/code&gt;
+&lt;/pre&gt;
+
+&lt;ul&gt;
+&lt;li&gt;MultiSpark&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;A set of sparklines that have been expanded automatically based on a
+influxdb tag.&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;Gauge&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;Gauge shows you the mean and max over the set time period.&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;BarChart&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;BarChart is a graph that represents grouped data.&lt;/p&gt;
+
+&lt;h3 id=&#34;json-definition:890ca4461a7712ff7ba32a852ca76ffd&#34;&gt;Json Definition&lt;/h3&gt;
+
+&lt;ul&gt;
+&lt;li&gt;Types:&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;pre&gt;
+    &lt;code class=&#34;go-css&#34;&gt;const(     
+    Short   = 1 #human readable numbers 100 1k 10m 1b
+    Percent = 2 #Data should be treated as a percent
+    Bytes   = 3 #human readable bytes 1b 30kb 1mb 10gb 1tb
+    Time    = 4 #human readable time duration 1sec 5m 1h
+)
+&lt;/code&gt;
+&lt;/pre&gt;
+
+&lt;ul&gt;
+&lt;li&gt;From:
+From is the measurement you are going to query in influxdb.&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;&amp;ldquo;&lt;code&gt;/system.cpu.*/&lt;/code&gt;&amp;rdquo; example regex.&lt;br&gt;
+&amp;ldquo;&lt;code&gt;system.cpu&lt;/code&gt;&amp;rdquo; example full measurement name.&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;Where:
+Where allows you to add to the where clause in your influxdb query.&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;&amp;ldquo;&lt;code&gt;service=&#39;name&#39;&lt;/code&gt;&amp;ldquo;&lt;br&gt;
+&amp;ldquo;`service=&amp;lsquo;name&amp;rsquo; AND host=&amp;lsquo;hostname&amp;rsquo;&amp;rdquo;&lt;/p&gt;
+
+&lt;h3 id=&#34;example-dashboard:890ca4461a7712ff7ba32a852ca76ffd&#34;&gt;Example Dashboard&lt;/h3&gt;
+
+&lt;p&gt;Here is an example dashboard. In the image below you will see that I am adjusting the time range of the queries for the dashboard. This is accomplished by pressing &lt;t&gt; to move forward in time and &lt;y&gt; to move back through the list of time ranges. Right now time ranges are hard coded to be:&lt;/p&gt;
+
+&lt;p&gt;&lt;code&gt;{&amp;quot;15m&amp;quot;, &amp;quot;30m&amp;quot;, &amp;quot;1h&amp;quot;, &amp;quot;8h&amp;quot;, &amp;quot;24h&amp;quot;, &amp;quot;2d&amp;quot;, &amp;quot;5d&amp;quot;, &amp;quot;7d&amp;quot;}&lt;/code&gt;&lt;/p&gt;
+
+&lt;p&gt;This will become configurable eventually but these are the most commonly used in our system.&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&#34;http://vrecan.github.io/fluxdashv2.gif&#34; alt=&#34;Example Dashboard&#34; /&gt;
+&lt;/p&gt;
+
+&lt;p&gt;You will also notice that the refresh and the group by interval are adjusted based on the time range. Again this will be come configurable at a later date.&lt;/p&gt;
+
+&lt;pre&gt;
+    &lt;code class=&#34;json-css&#34;&gt;
+
+{
+    &#34;rows&#34;: [{
+        &#34;height&#34;: 1,
+        &#34;span&#34;: 12,
+        &#34;offset&#34;: 0,
+        &#34;columns&#34;: [{
+            &#34;height&#34;: 1,
+            &#34;span&#34;: 6,
+            &#34;offset&#34;: 0,
+            &#34;timep&#34;: {
+                &#34;height&#34;: 3,
+                &#34;border&#34;: true
+            }
+        },{
+            &#34;height&#34;: 1,
+            &#34;span&#34;: 3,
+            &#34;offset&#34;: 0,
+            &#34;p&#34;: {
+                &#34;height&#34;: 3,
+                &#34;text&#34;: &#34;System Health&#34;,
+                &#34;border&#34;: true
+            }
+        },
+        {
+            &#34;height&#34;: 1,
+            &#34;span&#34;: 3,
+            &#34;offset&#34;: 0,
+            &#34;loading&#34;: {
+                &#34;height&#34;: 3,
+                &#34;border&#34;: true,
+                &#34;bordertop&#34;: true,
+                &#34;borderbottom&#34;: true,
+                &#34;borderright&#34;: true,
+                &#34;borderleft&#34;: true,
+                &#34;BarColor&#34;: 5,
+                &#34;BorderFg&#34;: 5
+            }
+        }]
+    },
+     {
+        &#34;height&#34;: 1,
+        &#34;span&#34;: 12,
+        &#34;offset&#34;: 0,
+        &#34;columns&#34;: [{
+            &#34;height&#34;: 1,
+            &#34;span&#34;: 12,
+            &#34;offset&#34;: 0,
+            &#34;sparklines&#34;: {
+                &#34;Height&#34; : 1,
+                &#34;lines&#34;: [{
+                    &#34;from&#34;: &#34;/system.cpu/&#34;,
+                    &#34;title&#34;: &#34;CPU&#34;,
+                    &#34;where&#34;: &#34;&#34;,
+                    &#34;type&#34;: 2,
+                    &#34;height&#34;: 1,
+                    &#34;linecolor&#34; : 5,
+                    &#34;titlecolor&#34;: 0
+                }, {
+                    &#34;from&#34;: &#34;/system.mem.free/&#34;,
+                    &#34;title&#34;: &#34;System Free memory&#34;,
+                    &#34;type&#34;: 3,
+                    &#34;height&#34;: 1
+                },
+                {
+                    &#34;from&#34;: &#34;/system.mem.cached/&#34;,
+                    &#34;title&#34;: &#34;System Cached memory&#34;,
+                    &#34;type&#34;: 3,
+                    &#34;height&#34;: 1
+                },{
+                    &#34;from&#34;: &#34;/system.mem.buffers/&#34;,
+                    &#34;title&#34;: &#34;System Buffers memory&#34;,
+                    &#34;type&#34;: 3,
+                    &#34;height&#34;: 1
+                }]
+            }
+        }]
+    }, 
+     {
+        &#34;height&#34;: 1,
+        &#34;span&#34;: 12,
+        &#34;offset&#34;: 0,
+        &#34;columns&#34;: [{
+            &#34;height&#34;: 1,
+            &#34;span&#34;: 3,
+            &#34;offset&#34;: 0,
+            &#34;barchart&#34;: {
+                &#34;height&#34;: 6,
+                &#34;from&#34;: &#34;/es.indices/&#34;,
+                &#34;where&#34;: &#34;service=&#39;gomaintain&#39;&#34;,
+                &#34;borderLabel&#34;: &#34;Elastic Indices&#34;
+            }
+        },{
+        &#34;height&#34;: 1,
+        &#34;span&#34;: 6,
+        &#34;offset&#34;: 0,
+        &#34;gauge&#34;: {
+            &#34;height&#34;: 3,
+            &#34;from&#34;: &#34;/es.*.FS.Used.Percent/&#34;,
+            &#34;where&#34;: &#34;service=&#39;gomaintain&#39;&#34;,
+            &#34;border&#34;: true,
+            &#34;BorderLabel&#34;: &#34;ES&#34;,
+            &#34;bordertop&#34;: true,
+            &#34;borderbottom&#34;: true,
+            &#34;borderright&#34;: true,
+            &#34;borderleft&#34;: true,
+            &#34;BarColor&#34;: 5,
+            &#34;BorderBg&#34;: 5,
+            &#34;label&#34;: &#34;Disk Used&#34;
+        }
+    }]
+},{
+        &#34;height&#34;: 1,
+        &#34;span&#34;: 12,
+        &#34;offset&#34;: 0,
+        &#34;columns&#34;: [{
+            &#34;height&#34;: 1,
+            &#34;span&#34;: 12,
+            &#34;offset&#34;: 0,
+            &#34;sparklines&#34;: {
+                &#34;Height&#34; : 1,
+                &#34;lines&#34;: [{
+                    &#34;from&#34;: &#34;/system.disk.[^dm|util].*.read.bytes/&#34;,
+                    &#34;title&#34;: &#34;Total Disk IO READ Bytes&#34;,
+                    &#34;where&#34;: &#34;&#34;,
+                    &#34;type&#34;: 3,
+                    &#34;height&#34;: 1,
+                    &#34;linecolor&#34; : 5,
+                    &#34;titlecolor&#34;: 0
+                },{
+                    &#34;from&#34;: &#34;/system.disk.[^dm|util].*.write.bytes/&#34;,
+                    &#34;title&#34;: &#34;Total Disk IO Write Bytes&#34;,
+                    &#34;where&#34;: &#34;&#34;,
+                    &#34;type&#34;: 3,
+                    &#34;height&#34;: 1,
+                    &#34;linecolor&#34; : 5,
+                    &#34;titlecolor&#34;: 0
+                }]
+            }
+        }]
+    },
+         {
+        &#34;height&#34;: 1,
+        &#34;span&#34;: 12,
+        &#34;offset&#34;: 0,
+        &#34;columns&#34;: [{
+            &#34;height&#34;: 1,
+            &#34;span&#34;: 12,
+            &#34;offset&#34;: 0,
+            &#34;multispark&#34;: {
+                &#34;height&#34;: 3,
+                &#34;from&#34;: &#34;/Dispatch.*/&#34;,
+                &#34;where&#34;: &#34;service=&#39;godispatch&#39;&#34;,
+                &#34;borderLabel&#34;: &#34;Dispatch&#34;,
+                &#34;border&#34; : true,
+                &#34;Bordertop&#34; : true,
+                &#34;Borderbottom&#34; : true,
+                &#34;Borderleft&#34; : true,
+                &#34;Borderright&#34; : true,
+                &#34;Borderfg&#34;: 4,              
+                &#34;bg&#34; : 1,
+                &#34;type&#34;: 1,
+                &#34;autocolor&#34;: true,
+                &#34;titlecolor&#34;: 6
+            }
+        }]
+    }]
+}
+&lt;/code&gt;
+&lt;/pre&gt;
+
+&lt;p&gt;&lt;a href=&#34;https://github.com/vrecan/FluxDash&#34;&gt;Link to code&lt;/a&gt;&lt;/p&gt;
+</description>
+    </item>
     
     <item>
       <title>Gracefull Shutdown of Goroutines</title>
@@ -23,23 +318,25 @@
 
 &lt;p&gt;First, lets create a struct that will manage our goroutine. In this case it&amp;rsquo;s just going to be one but there are no restrictions here.&lt;/p&gt;
 
-&lt;pre&gt;&lt;code&gt;
+&lt;pre&gt;
+    &lt;code class=&#34;go-css&#34;&gt;
+
 //App is an example struct that will run goroutines
 type App struct {
-	wg   *sync.WaitGroup //allow us to wait for close
-	done chan bool
-	Data chan string
+    wg   *sync.WaitGroup //allow us to wait for close
+    done chan bool
+    Data chan string
 }
 
 func NewApp() (app *App) {
-	app = &amp;amp;App{
-		wg:   &amp;amp;sync.WaitGroup{},
-		done: make(chan bool, 1),
-		Data: make(chan string, 100),
-	}
-	return app
-}
-&lt;/code&gt;&lt;/pre&gt;
+    app = &amp;App{
+        wg:   &amp;sync.WaitGroup{},
+        done: make(chan bool, 1),
+        Data: make(chan string, 100),
+    }
+    return app
+&lt;/code&gt;
+&lt;/pre&gt;
 
 &lt;p&gt;With this we can now add a few methods to start and run our goroutine. First, our start method which will increment our wait group and run our goroutine. It&amp;rsquo;s important to increment the wait group before you spin up the goroutine otherwise you can have a race condition on close.&lt;/p&gt;
 
@@ -54,50 +351,56 @@ func (a *App) Start() {
 
 &lt;p&gt;The other way of managing shutdown of a goroutine is to just close it when you are done sending things to the channel. The benefit of this approach is that you will always process all of the messages before you exit. Obviously this could be a negative as well if you don&amp;rsquo;t want to process everything on the queue before a shutdown.&lt;/p&gt;
 
-&lt;pre&gt;&lt;code&gt;//Run with select statement to manage shutdown
+&lt;pre&gt;
+    &lt;code class=&#34;go-css&#34;&gt;
+//Run with select statement to manage shutdown
 func (a *App) runSelect() {
-	defer a.wg.Done()
+    defer a.wg.Done()
 loop:
-	for {
-		select {
+    for {
+        select {
 
-		case &amp;lt;-a.done:
-			fmt.Println(&amp;quot;Detected close doing cleanup and exiting&amp;quot;)
-			a.wg.Add(1)
-			a.runClose()
-			break loop
-			//do cleanup if needed
-		case s, ok := &amp;lt;-a.Data:
-			if ok { //ok will tell us if the channel has been shutdown
-				fmt.Println(&amp;quot;select: &amp;quot;, s)
-			} else {
-				//done processing all messages exit
-				fmt.Println(&amp;quot;Breaking loop&amp;quot;)
-				break loop
-			}
-		}
-	}
+        case &lt;-a.done:
+            fmt.Println(&#34;Detected close doing cleanup and exiting&#34;)
+            a.wg.Add(1)
+            a.runClose()
+            break loop
+            //do cleanup if needed
+        case s, ok := &lt;-a.Data:
+            if ok { //ok will tell us if the channel has been shutdown
+                fmt.Println(&#34;select: &#34;, s)
+            } else {
+                //done processing all messages exit
+                fmt.Println(&#34;Breaking loop&#34;)
+                break loop
+            }
+        }
+    }
 }
 //process all messaging on the queue until we get close message
 func (a *App) runClose() {
-	for s := range a.Data {
-		fmt.Println(&amp;quot;close: &amp;quot;, s)
-	}
+    for s := range a.Data {
+        fmt.Println(&#34;close: &#34;, s)
+    }
 }
-&lt;/code&gt;&lt;/pre&gt;
+&lt;/code&gt;
+&lt;/pre&gt;
 
 &lt;p&gt;Now it&amp;rsquo;s time for our simple close method that will send our done signal and
 also close our channel. &lt;strong&gt;&lt;em&gt;In a real application you want to make sure to only close a Go channel after you can guarantee all the senders are done.&lt;/em&gt;&lt;/strong&gt; Go channels will panic if you try to send to a closed channel.&lt;/p&gt;
 
-&lt;pre&gt;&lt;code&gt;//Cleanly close background routines
+&lt;pre&gt;
+    &lt;code class=&#34;go-css&#34;&gt;
+//Cleanly close background routines
 func (a *App) Close() {
-	if a != nil {
-		a.done &amp;lt;- true
-		close(a.Data) //this lets the recv know there is no more data
-		a.wg.Wait()
-	}
+    if a != nil {
+        a.done &lt;- true
+        close(a.Data) //this lets the recv know there is no more data
+        a.wg.Wait()
+    }
 }
-&lt;/code&gt;&lt;/pre&gt;
+&lt;/code&gt;
+&lt;/pre&gt;
 
 &lt;p&gt;Example main loop for completeness.&lt;/p&gt;
 

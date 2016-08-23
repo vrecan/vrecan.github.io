@@ -23,23 +23,25 @@
 
 &lt;p&gt;First, lets create a struct that will manage our goroutine. In this case it&amp;rsquo;s just going to be one but there are no restrictions here.&lt;/p&gt;
 
-&lt;pre&gt;&lt;code&gt;
+&lt;pre&gt;
+    &lt;code class=&#34;go-css&#34;&gt;
+
 //App is an example struct that will run goroutines
 type App struct {
-	wg   *sync.WaitGroup //allow us to wait for close
-	done chan bool
-	Data chan string
+    wg   *sync.WaitGroup //allow us to wait for close
+    done chan bool
+    Data chan string
 }
 
 func NewApp() (app *App) {
-	app = &amp;amp;App{
-		wg:   &amp;amp;sync.WaitGroup{},
-		done: make(chan bool, 1),
-		Data: make(chan string, 100),
-	}
-	return app
-}
-&lt;/code&gt;&lt;/pre&gt;
+    app = &amp;App{
+        wg:   &amp;sync.WaitGroup{},
+        done: make(chan bool, 1),
+        Data: make(chan string, 100),
+    }
+    return app
+&lt;/code&gt;
+&lt;/pre&gt;
 
 &lt;p&gt;With this we can now add a few methods to start and run our goroutine. First, our start method which will increment our wait group and run our goroutine. It&amp;rsquo;s important to increment the wait group before you spin up the goroutine otherwise you can have a race condition on close.&lt;/p&gt;
 
@@ -54,50 +56,56 @@ func (a *App) Start() {
 
 &lt;p&gt;The other way of managing shutdown of a goroutine is to just close it when you are done sending things to the channel. The benefit of this approach is that you will always process all of the messages before you exit. Obviously this could be a negative as well if you don&amp;rsquo;t want to process everything on the queue before a shutdown.&lt;/p&gt;
 
-&lt;pre&gt;&lt;code&gt;//Run with select statement to manage shutdown
+&lt;pre&gt;
+    &lt;code class=&#34;go-css&#34;&gt;
+//Run with select statement to manage shutdown
 func (a *App) runSelect() {
-	defer a.wg.Done()
+    defer a.wg.Done()
 loop:
-	for {
-		select {
+    for {
+        select {
 
-		case &amp;lt;-a.done:
-			fmt.Println(&amp;quot;Detected close doing cleanup and exiting&amp;quot;)
-			a.wg.Add(1)
-			a.runClose()
-			break loop
-			//do cleanup if needed
-		case s, ok := &amp;lt;-a.Data:
-			if ok { //ok will tell us if the channel has been shutdown
-				fmt.Println(&amp;quot;select: &amp;quot;, s)
-			} else {
-				//done processing all messages exit
-				fmt.Println(&amp;quot;Breaking loop&amp;quot;)
-				break loop
-			}
-		}
-	}
+        case &lt;-a.done:
+            fmt.Println(&#34;Detected close doing cleanup and exiting&#34;)
+            a.wg.Add(1)
+            a.runClose()
+            break loop
+            //do cleanup if needed
+        case s, ok := &lt;-a.Data:
+            if ok { //ok will tell us if the channel has been shutdown
+                fmt.Println(&#34;select: &#34;, s)
+            } else {
+                //done processing all messages exit
+                fmt.Println(&#34;Breaking loop&#34;)
+                break loop
+            }
+        }
+    }
 }
 //process all messaging on the queue until we get close message
 func (a *App) runClose() {
-	for s := range a.Data {
-		fmt.Println(&amp;quot;close: &amp;quot;, s)
-	}
+    for s := range a.Data {
+        fmt.Println(&#34;close: &#34;, s)
+    }
 }
-&lt;/code&gt;&lt;/pre&gt;
+&lt;/code&gt;
+&lt;/pre&gt;
 
 &lt;p&gt;Now it&amp;rsquo;s time for our simple close method that will send our done signal and
 also close our channel. &lt;strong&gt;&lt;em&gt;In a real application you want to make sure to only close a Go channel after you can guarantee all the senders are done.&lt;/em&gt;&lt;/strong&gt; Go channels will panic if you try to send to a closed channel.&lt;/p&gt;
 
-&lt;pre&gt;&lt;code&gt;//Cleanly close background routines
+&lt;pre&gt;
+    &lt;code class=&#34;go-css&#34;&gt;
+//Cleanly close background routines
 func (a *App) Close() {
-	if a != nil {
-		a.done &amp;lt;- true
-		close(a.Data) //this lets the recv know there is no more data
-		a.wg.Wait()
-	}
+    if a != nil {
+        a.done &lt;- true
+        close(a.Data) //this lets the recv know there is no more data
+        a.wg.Wait()
+    }
 }
-&lt;/code&gt;&lt;/pre&gt;
+&lt;/code&gt;
+&lt;/pre&gt;
 
 &lt;p&gt;Example main loop for completeness.&lt;/p&gt;
 

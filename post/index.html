@@ -92,28 +92,17 @@
     <div class="social-buttons">
       
         
-        <a href="http://google.com/&#43;BenAldrich" target="_blank"><i class='fa fa-google-plus'></i></a>
+        <a href="http://www.github.com/vrecan" target="_blank"><i class='fa fa-github'></i></a>
         
       
         
-        <a href="http://www.github.com/vrecan" target="_blank"><i class='fa fa-github'></i></a>
+        <a href="http://google.com/&#43;BenAldrich" target="_blank"><i class='fa fa-google-plus'></i></a>
         
       
       
     </div>
     
   </div>
-
-<script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
-
-<ins class="adsbygoogle"
-     style="display:block"
-     data-ad-client="ca-pub-8317181959078153"
-     data-ad-slot="3970736822"
-     data-ad-format="auto"></ins>
-<script>
-(adsbygoogle = window.adsbygoogle || []).push({});
-</script>
 </div>
 
 
@@ -122,6 +111,42 @@
       
 
       <div class="posts">
+        
+          <section  class="post">
+            <header class="post-header">
+            
+            <h1 class="post-title">
+              <a href="/post/intro_fluxdash/">InfluxDB Terminal Dashboards with FluxDash</a>
+            </h1>
+            </header>
+            <p class="post-meta">
+            	
+		          <span class="post-date">
+		            <span class="post-date-day"><sup>28</sup></span><span class="post-date-separator">/</span><span class="post-date-month">Dec</span> <span class="post-date-year">2015</span>
+		          </span>
+      				
+      				
+      					
+      				
+              
+                <span class="post-reading-time"><i class="fa fa-clock-o"></i> <em>4 min. read</em></span>
+              
+      				
+      					<div class="post-categories">
+				        
+      					
+					        <a class="post-category post-category-development" href="http://vrecan.github.io//categories/development">Development</a>
+      					
+      					</div>
+      				
+            </p>
+            <article class="post-summary">
+            	Overview FluxDash is a dashboard terminal ui that is fully configurable through json files. You can either give it an indivudual json file or a folder and it will read any json file in the folder and attemp to turn it into a dashboard. You can then move between dashboard by pressing . Features Sparklines Sparklines are a simplified single stat linechart that gives you basic trending over time. Example json: "sparklines": { "Height": 1, "lines": [{ "from": "/system.cpu/", "title": "CPU", "where": "", "type": 2, "height": 1, "linecolor": 5, "titlecolor": 0 }, { "from": "/system.mem.free/", "title": "System Free memory", "type": 3, "height": 1 }, { "from": "/system.mem.cached/", "title": "System Cached memory", "type": 3, "height": 1 }, { "from": "/system.mem.buffers/", "title": "System Buffers memory", "type": 3, "height": 1 }] } MultiSpark A set of sparklines that have been expanded automatically based on a influxdb tag.
+            </article>
+			<div class="read-more-link">
+				<a href="/post/intro_fluxdash/"><span class="read-more-slashes">//</span>Read More...</a>
+			</div>
+          </section>
         
           <section  class="post">
             <header class="post-header">
@@ -152,7 +177,7 @@
       				
             </p>
             <article class="post-summary">
-            	Overview A common problem people new to Go tend to run into is managing goroutines. Starting a goroutine is easy but how do you guarantee it closes gracefully when you are ready to exit? All code for this example lives here. First, lets create a struct that will manage our goroutine. In this case it&rsquo;s just going to be one but there are no restrictions here. //App is an example struct that will run goroutines type App struct { wg *sync.WaitGroup //allow us to wait for close done chan bool Data chan string } func NewApp() (app *App) { app = &amp;App{ wg: &amp;sync.WaitGroup{}, done: make(chan bool, 1), Data: make(chan string, 100), } return app } With this we can now add a few methods to start and run our goroutine.
+            	Overview A common problem people new to Go tend to run into is managing goroutines. Starting a goroutine is easy but how do you guarantee it closes gracefully when you are ready to exit? All code for this example lives here. First, lets create a struct that will manage our goroutine. In this case it&rsquo;s just going to be one but there are no restrictions here. //App is an example struct that will run goroutines type App struct { wg *sync.WaitGroup //allow us to wait for close done chan bool Data chan string } func NewApp() (app *App) { app = &App{ wg: &sync.WaitGroup{}, done: make(chan bool, 1), Data: make(chan string, 100), } return app With this we can now add a few methods to start and run our goroutine.
             </article>
 			<div class="read-more-link">
 				<a href="/post/graceful_goroutnes/"><span class="read-more-slashes">//</span>Read More...</a>
@@ -313,7 +338,7 @@
 		</ul>
 	</div>
 
-	<p>&copy; 2015. All rights reserved. </p>
+	<p>&copy; 2016. All rights reserved. </p>
 </div>
     </div>
   </div>
